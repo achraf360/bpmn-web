@@ -14,7 +14,7 @@
     <bpmn2:endEvent id="Event_1jjxjld">
       <bpmn2:incoming>Flow_0qpyqwk</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:serviceTask id="Activity_0msx103" name="service2" camunda:delegateExpression="service2">
+    <bpmn2:serviceTask id="Activity_0msx103" name="service2" camunda:delegateExpression="service1">
       <bpmn2:incoming>Flow_0bqavae</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0qpyqwk</bpmn2:outgoing>
     </bpmn2:serviceTask>

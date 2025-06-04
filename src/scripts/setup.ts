@@ -1,108 +1,116 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 import * as readline from "readline";
-import {UserService } from '../userAccess/UserService'
+import { UserService } from "../userAccess/UserService";
 
-const cl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
+const cl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false,
+});
 
 const question = function (q) {
-    return new Promise((res, rej) => {
-        cl.question(q, answer => {
-            res(answer);
-        })
+  return new Promise((res, rej) => {
+    cl.question(q, (answer) => {
+      res(answer);
     });
+  });
 };
 main();
 async function main() {
+  console.log(
+    "This routine will copy initial files and setup bpmn-server database"
+  );
 
-    console.log('This routine will copy initial files and setup bpmn-server database');
+  const ret = await copyFiles();
+  if (ret) {
+    // created an .env file
+    console.log(" setup is not complete....");
+    console.log(
+      "------------------------------------------------------------------"
+    );
+    console.log('Please edit ".env" file to point to your MongoDB');
+    console.log(
+      "Once complete editing the .env file, please run setup one more time to complete process."
+    );
+    console.log(
+      "------------------------------------------------------------------"
+    );
+  } else {
+    const server = await install();
+  }
 
-
-    const ret = await copyFiles();
-    if (ret)   // created an .env file
-    {
-        console.log(' setup is not complete....');
-        console.log('------------------------------------------------------------------');
-        console.log('Please edit ".env" file to point to your MongoDB');
-        console.log('Once complete editing the .env file, please run setup one more time to complete process.')
-        console.log('------------------------------------------------------------------');
-
-    }
-    else {
-            const server=await install();
-
-    }
-
-    process.exit();
-
+  process.exit();
 }
 
 async function promptForEdit() {
-    let command = await question('Please edit ".env" file to point to your MongoDB commands\n\r> Press Enter when done.');
-    console.log(' continue...');
-    return command;
+  let command = await question(
+    'Please edit ".env" file to point to your MongoDB commands\n\r> Press Enter when done.'
+  );
+  console.log(" continue...");
+  return command;
 }
 
 function copyFiles() {
-    const ret=copyFile('INSTALL.env', '.env');
-    copyFile('./src/test/INSTALL.env', './src/test/.env');
-    copyFile('./src/WorkflowApp/INSTALL_configuration.ts', './src/WorkflowApp/configuration.ts');
-    copyFile('./src/WorkflowApp/INSTALL_appDelegate.ts', './src/WorkflowApp/appDelegate.ts');
-//    copyFile('./WorkflowApp/INSTALL_appDelegate.js', './WorkflowApp/appDelegate.js');
+  const ret = copyFile("INSTALL.env", ".env");
+  copyFile("./src/test/INSTALL.env", "./src/test/.env");
+  copyFile(
+    "./src/WorkflowApp/INSTALL_configuration.ts",
+    "./src/WorkflowApp/configuration.ts"
+  );
+  copyFile(
+    "./src/WorkflowApp/INSTALL_appDelegate.ts",
+    "./src/WorkflowApp/appDelegate.ts"
+  );
+  //    copyFile('./WorkflowApp/INSTALL_appDelegate.js', './WorkflowApp/appDelegate.js');
 
-    return ret;
+  return ret;
 }
 function copyFile(from, to) {
-    if (!fs.existsSync(to)) {
-        fs.copyFileSync(from, to);
-        console.log(`file ${to} created.`);
-        return true;
-    }
-    return false;
+  if (!fs.existsSync(to)) {
+    fs.copyFileSync(from, to);
+    console.log(`file ${to} created.`);
+    return true;
+  }
+  return false;
 }
 
 async function install() {
+  const pack = require("../");
 
-    
-    const pack = require("../");
+  console.log("Installing a new Database");
 
-    console.log('Installing a new Database');
+  console.log("current directory is " + process.cwd());
+  console.log(
+    "Installing a new Database based on configuration in current directory"
+  );
+  console.log("current directory is " + process.cwd());
+  console.log("database configuration:", pack.configuration.database);
 
-    console.log('current directory is ' + process.cwd());
-    console.log('Installing a new Database based on configuration in current directory');
-    console.log('current directory is ' + process.cwd());
-    console.log('database configuration:',pack.configuration.database);
+  const server = new pack.BPMNServer(pack.configuration, null, { cron: false });
 
-    const server = new pack.BPMNServer(pack.configuration, null, { cron: false });
+  const dataStore = server.dataStore;
 
-    const dataStore = server.dataStore;
+  const modelsDataStore = server.definitions;
+  try {
+    await dataStore.install();
 
-    const modelsDataStore = server.definitions;
-    try {
-        await dataStore.install();
+    await modelsDataStore.install();
 
-        await modelsDataStore.install();
+    let userService = new UserService();
 
-        let userService=new UserService();
+    await userService.install();
+  } catch (exc) {
+    console.log(exc);
+  }
 
-        await userService.install();
-    }
-    catch (exc) {
-        console.log(exc);
-    }
-
-    console.log('---done.');
-    return server;
-
+  console.log("---done.");
+  return server;
 }
-//  upgrade logic 
-
+//  upgrade logic
 
 async function docModels(server) {
-
-
-    let models = await server.definitions.getList({});
-    let note = 
-`
+  let models = await server.definitions.getList({});
+  let note = `
 
 UPGRADE WARNING: Listing of Potential invalid expressions:
 ------------------------------------------------------------
@@ -120,98 +128,104 @@ UPGRADE WARNING: Listing of Potential invalid expressions:
 
 ------------------------------------------------------------------------------------------------------
     `;
-    let text=note;
-    let modelsCount=0;
-    for (let i = 0; i < models.length; i++) {
-        let model = models[i];
-        let docs = await docModel(server,model.name);
-        if (docs.size > 0) {
-            modelsCount++;
-            text+=('\n\nModel:' + model.name + '\n');
-            docs.forEach((list,node ) => {
-                text+=('\n\t Element:' + node);
-                list.forEach(item => {
-                    text +=('\n\t\t' + item.type+'\n\t\t'+item.text);
-                    if (item.value) {
-                        text +=('\n\t\t\t' + item.value);
-                    }
-                });
-
-            });
-        }
-    }
-    fs.writeFileSync('./upgrade.log',text);
-    console.log(note);
-    console.log(
-`       there are ${modelsCount} models that can be impacted
-        log file was written to 'upgrade.log'
-     if this is a new install, please ignore this message`);
-
-}
-
-async function docModel(server,name) {
-    let model = await server.definitions.load(name);
-
-    let docs = new Map();
-
-    //init 
-    model.nodes.forEach(node => {
-        node.init();
-        node.behaviours.forEach(behav => behav.init());
-    })
-
-    model.nodes.forEach(node => {
-        //console.log(node.type, node.id, node.subType);
-
-        switch (node.type) {
-            case 'bpmn:SequenceFlow':
-                const exp = node.def.conditionExpression;
-                if (exp) {
-                    docItem(docs,node,'condition',exp.body)
-                }
-                break;
-            default:
-                break;
-
-        }
-
-
-        node.behaviours.forEach(behav => {
-
-
-            switch (behav.constructor.name) {
-                case 'LoopBehaviour':
-                    docItem(docs, node, 'Loop', behav.collection);
-                    break;
-                case 'IOBehaviour':
-                    behav.parameters.forEach(param => {
-                        docItem(docs, node, 'Parameter',  param.name, JSON.stringify(param.value));
-                    });
-
-                    
-                    break;
-            }
+  let text = note;
+  let modelsCount = 0;
+  for (let i = 0; i < models.length; i++) {
+    let model = models[i];
+    let docs = await docModel(server, model.name);
+    if (docs.size > 0) {
+      modelsCount++;
+      text += "\n\nModel:" + model.name + "\n";
+      docs.forEach((list, node) => {
+        text += "\n\t Element:" + node;
+        list.forEach((item) => {
+          text += "\n\t\t" + item.type + "\n\t\t" + item.text;
+          if (item.value) {
+            text += "\n\t\t\t" + item.value;
+          }
         });
-    });
-
-    return docs;
-
+      });
+    }
+  }
+  fs.writeFileSync("./upgrade.log", text);
+  console.log(note);
+  console.log(
+    `       there are ${modelsCount} models that can be impacted
+        log file was written to 'upgrade.log'
+     if this is a new install, please ignore this message`
+  );
 }
-function docItem(docs, node, type, text, value=null) {
-    
-    let docNode = docs.get(node.id);
-    if (!docNode)
-        docs.set(node.id, []);
 
-    let list = docs.get(node.id);
-    let item = { type, text };
-    if (value)
-        item['value'] = value;
-    list.push(item);
+async function docModel(server, name) {
+  let model = await server.definitions.load(name);
+
+  let docs = new Map();
+
+  //init
+  model.nodes.forEach((node) => {
+    node.init();
+    node.behaviours.forEach((behav) => behav.init());
+  });
+
+  model.nodes.forEach((node) => {
+    //console.log(node.type, node.id, node.subType);
+
+    switch (node.type) {
+      case "bpmn:SequenceFlow":
+        const exp = node.def.conditionExpression;
+        if (exp) {
+          docItem(docs, node, "condition", exp.body);
+        }
+        break;
+      default:
+        break;
+    }
+
+    node.behaviours.forEach((behav) => {
+      switch (behav.constructor.name) {
+        case "LoopBehaviour":
+          docItem(docs, node, "Loop", behav.collection);
+          break;
+        case "IOBehaviour":
+          behav.parameters.forEach((param) => {
+            docItem(
+              docs,
+              node,
+              "Parameter",
+              param.name,
+              JSON.stringify(param.value)
+            );
+          });
+
+          break;
+      }
+    });
+  });
+
+  return docs;
+}
+function docItem(docs, node, type, text, value = null) {
+  let docNode = docs.get(node.id);
+  if (!docNode) docs.set(node.id, []);
+
+  let list = docs.get(node.id);
+  let item = { type, text };
+  if (value) item["value"] = value;
+  list.push(item);
 }
 function report(instance) {
-    instance.items.forEach(item => {
-        console.log('--item', item.seq, item.elementId, item.type, item.status, item.userName, item.assignee, item.candidateUsers, item.candidateGroups, item.dueDate);
-    });
+  instance.items.forEach((item) => {
+    console.log(
+      "--item",
+      item.seq,
+      item.elementId,
+      item.type,
+      item.status,
+      item.userName,
+      item.assignee,
+      item.candidateUsers,
+      item.candidateGroups,
+      item.dueDate
+    );
+  });
 }
-

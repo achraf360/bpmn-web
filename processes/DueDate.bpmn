@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_1vv0f0j">
+    <bpmn2:participant id="Participant_14ahd5p" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="true">
+    <bpmn2:laneSet id="LaneSet_1uwrpps">
+      <bpmn2:lane id="Lane_1013sy1">
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>UserTask_DueDate</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>UserTask_DueDate2</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Event_0g5pams</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>notifyDueDate</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Event_14700zv</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="Lane_1qvp1mm">
+        <bpmn2:flowNodeRef>Event_1yhqlhu</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_02j46k8</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Event_1elc0ho</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_0ov7ogz</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_0ov7ogz" sourceRef="StartEvent_1" targetRef="UserTask_DueDate" />
+    <bpmn2:userTask id="UserTask_DueDate" name="DueDate Task" camunda:dueDate="$this.dueDate">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">var date=new Date();
+date.setDate(date.getDate()+5);
+this.dueDate=date.toISOString();
+console.log("dueDate", this.dueDate);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0ov7ogz</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_053q1cw</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="UserTask_DueDate2" name="DueDate Task2" camunda:assignee="achraf36" camunda:dueDate="$this.dueDate">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">var date=new Date();
+date.setDate(date.getDate()+1);
+this.dueDate=date.toISOString();</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_053q1cw</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_196y6q7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_053q1cw" sourceRef="UserTask_DueDate" targetRef="UserTask_DueDate2" />
+    <bpmn2:endEvent id="Event_0g5pams">
+      <bpmn2:incoming>Flow_196y6q7</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_196y6q7" sourceRef="UserTask_DueDate2" targetRef="Event_0g5pams" />
+    <bpmn2:sequenceFlow id="Flow_0uk42id" sourceRef="Event_14700zv" targetRef="notifyDueDate" />
+    <bpmn2:boundaryEvent id="Event_14700zv" cancelActivity="false" attachedToRef="UserTask_DueDate2">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">appServices.calculateDueDate({days:10},this);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_0uk42id</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_045n14z">
+        <bpmn2:timeDate xsi:type="bpmn2:tFormalExpression">2025-04-07T10:31:34.211Z</bpmn2:timeDate>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:serviceTask id="notifyDueDate" name="Notify DueDate" camunda:delegateExpression="sendEmail">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="to">
+            <camunda:script scriptFormat="JavaScript">["achraf36"]</camunda:script>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="subject">Alert</camunda:inputParameter>
+          <camunda:inputParameter name="text">Test alert dueDate</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0uk42id</bpmn2:incoming>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="Flow_0mm66s8" sourceRef="Event_1yhqlhu" targetRef="Activity_02j46k8" />
+    <bpmn2:startEvent id="Event_1yhqlhu">
+      <bpmn2:outgoing>Flow_0mm66s8</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="Activity_02j46k8" name="Init">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="fullname" label="Full Name" type="string" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0mm66s8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_15p1ro2</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="Event_1elc0ho">
+      <bpmn2:incoming>Flow_15p1ro2</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_15p1ro2" sourceRef="Activity_02j46k8" targetRef="Event_1elc0ho" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1vv0f0j">
+      <bpmndi:BPMNShape id="Participant_14ahd5p_di" bpmnElement="Participant_14ahd5p" isHorizontal="true">
+        <dc:Bounds x="240" y="80" width="700" height="480" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1013sy1_di" bpmnElement="Lane_1013sy1" isHorizontal="true">
+        <dc:Bounds x="270" y="80" width="670" height="340" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1qvp1mm_di" bpmnElement="Lane_1qvp1mm" isHorizontal="true">
+        <dc:Bounds x="270" y="420" width="670" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0uk42id_di" bpmnElement="Flow_0uk42id">
+        <di:waypoint x="620" y="200" />
+        <di:waypoint x="620" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_196y6q7_di" bpmnElement="Flow_196y6q7">
+        <di:waypoint x="670" y="258" />
+        <di:waypoint x="742" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_053q1cw_di" bpmnElement="Flow_053q1cw">
+        <di:waypoint x="500" y="258" />
+        <di:waypoint x="570" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ov7ogz_di" bpmnElement="Flow_0ov7ogz">
+        <di:waypoint x="338" y="258" />
+        <di:waypoint x="400" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mm66s8_di" bpmnElement="Flow_0mm66s8">
+        <di:waypoint x="348" y="480" />
+        <di:waypoint x="400" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15p1ro2_di" bpmnElement="Flow_15p1ro2">
+        <di:waypoint x="500" y="480" />
+        <di:waypoint x="552" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="302" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13n57sk_di" bpmnElement="UserTask_DueDate">
+        <dc:Bounds x="400" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w5b1mx_di" bpmnElement="UserTask_DueDate2">
+        <dc:Bounds x="570" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0g5pams_di" bpmnElement="Event_0g5pams">
+        <dc:Bounds x="742" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kwoks7_di" bpmnElement="notifyDueDate">
+        <dc:Bounds x="570" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yhqlhu_di" bpmnElement="Event_1yhqlhu">
+        <dc:Bounds x="312" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0r68kup_di" bpmnElement="Activity_02j46k8">
+        <dc:Bounds x="400" y="440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1elc0ho_di" bpmnElement="Event_1elc0ho">
+        <dc:Bounds x="552" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1f7yycj_di" bpmnElement="Event_14700zv">
+        <dc:Bounds x="602" y="200" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

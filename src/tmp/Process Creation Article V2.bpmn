@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_0v2x10e">
+    <bpmn2:participant id="Participant_0k7ofgq" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1" name="Start" camunda:initiator="requester">
+      <bpmn2:outgoing>Flow_15zu4it</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_15zu4it" sourceRef="StartEvent_1" targetRef="UserTask_Init_Request" />
+    <bpmn2:sequenceFlow id="Flow_0y5fyqo" sourceRef="UserTask_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
+    <bpmn2:sequenceFlow id="Flow_07gencl" sourceRef="Gateway_009vbx4" targetRef="UserTask_Ref">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_daf==true)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0mgw61h" sourceRef="Gateway_009vbx4" targetRef="UserTask_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_daf==false)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1mu3t1o" sourceRef="UserTask_Validation_CDG_Central" targetRef="Gateway_009vbx4" />
+    <bpmn2:userTask id="UserTask_Init_Request" name="Initiation Demande" camunda:formKey="Form_Initiation" camunda:assignee="$data.requester">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="company" label="Société" type="enum">
+            <camunda:properties>
+              <camunda:property id="is_multiselect" value="true" />
+            </camunda:properties>
+            <camunda:value id="dels" name="Delis" />
+            <camunda:value id="delp" name="Delipat" />
+            <camunda:value id="delr" name="Delior" />
+          </camunda:formField>
+          <camunda:formField id="article_name" label="Nom" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="type" label="Type d&#39;article" type="enum">
+            <camunda:value id="MP" name="MP" />
+            <camunda:value id="PS" name="PS" />
+            <camunda:value id="PM" name="PM" />
+            <camunda:value id="INV" name="INV" />
+            <camunda:value id="MKT" name="MKT" />
+            <camunda:value id="FA" name="FA" />
+          </camunda:formField>
+          <camunda:formField id="supplier" label="Fournisseur" type="string" />
+          <camunda:formField id="purchase_price" label="Prix Achat HT" type="float" />
+          <camunda:formField id="purchase_tax_group" label="Groupe Taxe Achat" type="string" />
+          <camunda:formField id="multi_qty_purchase" label="Qte Multiple Achat" type="long" />
+          <camunda:formField id="purchase_unit" label="Unité d&#39;achat" type="string" />
+          <camunda:formField id="category" label="Famille" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/categories" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="subcategory" label="Sous Famille" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="{ &#34;url&#34;: &#34;/categories/:category/subcategories&#34;, &#34;params&#34;: { &#34;category&#34;: &#34;category&#34; } }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="subsub_category" label="S.Sous Famille" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="{ &#34;url&#34;: &#34;/subcategories/:subcategory/subsubcategories&#34;, &#34;params&#34;: { &#34;subcategory&#34;: &#34;subcategory&#34; } }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="storable" label="Stockable" type="boolean" />
+          <camunda:formField id="article_group" label="Groupe Article" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/inventitemgroups" />
+              <camunda:property id="mapping" value="ItemGroupId" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.article_name;</camunda:script>
+        </camunda:executionListener>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_15zu4it</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0mgw61h</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0y5fyqo</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="UserTask_Validation_CDG_Central" name="Validation CDG Central" camunda:formKey="Form_DAF" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_daf" label="Validation" type="validation" />
+          <camunda:formField id="comment_daf" label="Commentaire" type="text" />
+          <camunda:formField id="article_group" label="Groupe Article" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/inventitemgroups" />
+              <camunda:property id="mapping" value="ItemGroupId" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0y5fyqo</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1mu3t1o</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="Gateway_009vbx4">
+      <bpmn2:incoming>Flow_1mu3t1o</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_07gencl</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0mgw61h</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="UserTask_Ref" name="Référencement" camunda:formKey="Form_Ref" camunda:candidateGroups="REF">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_ref" label="Validation" type="validation" />
+          <camunda:formField id="comment_ref" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_07gencl</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1kzs64u</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_19r02f7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1kzs64u" sourceRef="UserTask_Ref" targetRef="Event_10sawzh" />
+    <bpmn2:sequenceFlow id="Flow_19r02f7" sourceRef="UserTask_Ref" targetRef="sendRequesterNotification" />
+    <bpmn2:serviceTask id="sendRequesterNotification" name="Send Notification to Requester" camunda:delegateExpression="sendEmail">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="to">$(data.requester)</camunda:inputParameter>
+          <camunda:inputParameter name="subject">Référencement Fournisseur</camunda:inputParameter>
+          <camunda:inputParameter name="text">Votre demande de création fournisseur a été traité avec succès</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_19r02f7</bpmn2:incoming>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="Event_10sawzh">
+      <bpmn2:incoming>Flow_1kzs64u</bpmn2:incoming>
+    </bpmn2:endEvent>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0v2x10e">
+      <bpmndi:BPMNShape id="Participant_0k7ofgq_di" bpmnElement="Participant_0k7ofgq" isHorizontal="true">
+        <dc:Bounds x="240" y="133" width="1160" height="287" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1mu3t1o_di" bpmnElement="Flow_1mu3t1o">
+        <di:waypoint x="670" y="290" />
+        <di:waypoint x="735" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mgw61h_di" bpmnElement="Flow_0mgw61h">
+        <di:waypoint x="760" y="315" />
+        <di:waypoint x="760" y="370" />
+        <di:waypoint x="460" y="370" />
+        <di:waypoint x="460" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07gencl_di" bpmnElement="Flow_07gencl">
+        <di:waypoint x="785" y="290" />
+        <di:waypoint x="850" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y5fyqo_di" bpmnElement="Flow_0y5fyqo">
+        <di:waypoint x="510" y="290" />
+        <di:waypoint x="570" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15zu4it_di" bpmnElement="Flow_15zu4it">
+        <di:waypoint x="338" y="290" />
+        <di:waypoint x="410" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kzs64u_di" bpmnElement="Flow_1kzs64u">
+        <di:waypoint x="950" y="290" />
+        <di:waypoint x="1022" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19r02f7_di" bpmnElement="Flow_19r02f7">
+        <di:waypoint x="900" y="250" />
+        <di:waypoint x="900" y="180" />
+        <di:waypoint x="990" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="302" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="308" y="315" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jx4swf_di" bpmnElement="UserTask_Init_Request">
+        <dc:Bounds x="410" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pdjkjd_di" bpmnElement="UserTask_Validation_CDG_Central">
+        <dc:Bounds x="570" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_009vbx4_di" bpmnElement="Gateway_009vbx4" isMarkerVisible="true">
+        <dc:Bounds x="735" y="265" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0huwo52_di" bpmnElement="UserTask_Ref">
+        <dc:Bounds x="850" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wa0jdm_di" bpmnElement="sendRequesterNotification">
+        <dc:Bounds x="990" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10sawzh_di" bpmnElement="Event_10sawzh">
+        <dc:Bounds x="1022" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

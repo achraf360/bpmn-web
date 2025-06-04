@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_06ibakk">
+    <bpmn2:participant id="Participant_1csethe" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="SALESPERSON">
+    <bpmn2:laneSet id="LaneSet_1lxzmqi">
+      <bpmn2:lane id="Lane_025v2wr">
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_Init_Request</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_Validation_RC</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_Ref</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>event_end</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Gateway_Validation_DAF</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>sendRequesterNotification</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Gateway_Validation_RC</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_Validation_DAF</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>event_closed</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_Logistic</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:startEvent id="StartEvent_1" name="Start" camunda:initiator="requester" camunda:candidateGroups="SALESPERSON">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.startDate=this.startedAt;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_0gzdmf3</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:formKey="Form_Initiation" camunda:assignee="$data.requester">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="clientName" label="Nom Client" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+              <camunda:property id="is_subject" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="ICE" label="ICE" type="string">
+            <camunda:validation>
+              <camunda:constraint name="min" config="15" />
+              <camunda:constraint name="max" config="15" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="RC" label="RC" type="file" />
+          <camunda:formField id="professionalTax" label="Taxe Professionnelle" type="file" />
+          <camunda:formField id="creationRequest" label="Demande d&#39;ouverture de compte client signé" type="file" />
+          <camunda:formField id="segment" label="Segment" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/segments" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;segmentId&#34;],   &#34;valueField&#34;: &#34;segmentId&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="subSegment" label="Sous Segment" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="{ &#34;url&#34;: &#34;/segments/:segmentId/subsegments&#34;, &#34;params&#34;: { &#34;segmentId&#34;: &#34;segment&#34; } }" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;subSegmentId&#34;],   &#34;valueField&#34;: &#34;subSegmentId&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="subSubSegment" label="Canal" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="{ &#34;url&#34;: &#34;/subsegments/:subSegmentId/subsubsegments&#34;, &#34;params&#34;: { &#34;subSegmentId&#34;: &#34;subSegment&#34; } }" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;subSubSegmentId&#34;],   &#34;valueField&#34;: &#34;subSubSegmentId&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="zone" label="Zone" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/salesdistrictgroups" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;salesDistrictId&#34;],   &#34;valueField&#34;: &#34;salesDistrictId&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="city" label="Ville" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/cities" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;name&#34;],   &#34;valueField&#34;: &#34;name&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commercial" label="Commercial" type="string" />
+          <camunda:formField id="rate" label="Tarif" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/pricediscgroups" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;groupId&#34;,&#34;name&#34;],   &#34;valueField&#34;: &#34;groupId&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.clientName;</camunda:script>
+        </camunda:executionListener>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=false;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0gzdmf3</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1e1m9m9</bpmn2:incoming>
+      <bpmn2:incoming>Flow_054i6e5</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_091rul1</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Activity_Validation_RC" name="Validation RC" camunda:formKey="Form_RC" camunda:candidateGroups="RC">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validationRC" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject,require_info" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentRC" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=true;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_091rul1</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_19facj8</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Activity_Ref" name="Référencement" camunda:formKey="Form_Ref" camunda:candidateGroups="REF">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="clientCodeAx" label="Code client" type="string" />
+          <camunda:formField id="clientNameAx" label="Nom Client" type="string" />
+          <camunda:formField id="commentREF" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=true;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1o2isvs</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0zai1jm</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1sld8p8</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="event_end" name="End">
+      <bpmn2:incoming>Flow_0zai1jm</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="Gateway_Validation_DAF">
+      <bpmn2:incoming>Flow_06au8rm</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_09vq0q2</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_054i6e5</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:serviceTask id="sendRequesterNotification" name="Send Notification to Requester" camunda:delegateExpression="sendEmail">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="to">$(data.requester)</camunda:inputParameter>
+          <camunda:inputParameter name="subject">Référencement Client</camunda:inputParameter>
+          <camunda:inputParameter name="text">Votre demande de création client a été traité avec succés</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1sld8p8</bpmn2:incoming>
+    </bpmn2:serviceTask>
+    <bpmn2:exclusiveGateway id="Gateway_Validation_RC">
+      <bpmn2:incoming>Flow_19facj8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1fg8idk</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1l157ia</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1e1m9m9</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="Activity_Validation_DAF" name="Validation DAF" camunda:formKey="Form_DAF" camunda:candidateGroups="DAF">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validationDAF" label="Validation" type="validation" />
+          <camunda:formField id="commentDAF" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=true;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1l157ia</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_06au8rm</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="event_closed" name="Closed">
+      <bpmn2:incoming>Flow_1fg8idk</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_01h4sax" />
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_0zai1jm" sourceRef="Activity_Ref" targetRef="event_end" />
+    <bpmn2:sequenceFlow id="Flow_19facj8" sourceRef="Activity_Validation_RC" targetRef="Gateway_Validation_RC" />
+    <bpmn2:sequenceFlow id="Flow_091rul1" sourceRef="Activity_Init_Request" targetRef="Activity_Validation_RC" />
+    <bpmn2:sequenceFlow id="Flow_0gzdmf3" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
+    <bpmn2:sequenceFlow id="Flow_1l157ia" name="Approved" sourceRef="Gateway_Validation_RC" targetRef="Activity_Validation_DAF">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationRC=="approve")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1e1m9m9" name="Information Required" sourceRef="Gateway_Validation_RC" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationRC=="require_info")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_06au8rm" sourceRef="Activity_Validation_DAF" targetRef="Gateway_Validation_DAF" />
+    <bpmn2:sequenceFlow id="Flow_09vq0q2" name="Approved" sourceRef="Gateway_Validation_DAF" targetRef="Activity_Logistic">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="approve")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_054i6e5" name="Information Required" sourceRef="Gateway_Validation_DAF" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="require_info")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1o2isvs" sourceRef="Activity_Logistic" targetRef="Activity_Ref" />
+    <bpmn2:sequenceFlow id="Flow_1sld8p8" sourceRef="Activity_Ref" targetRef="sendRequesterNotification" />
+    <bpmn2:sequenceFlow id="Flow_1fg8idk" name="Rejected" sourceRef="Gateway_Validation_RC" targetRef="event_closed">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationRC=="reject")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="Activity_Logistic" name="Logistique" camunda:formKey="Form_Logistic" camunda:candidateGroups="LOGISTIC">
+      <bpmn2:extensionElements>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="destinationCode" label="Code Tourné" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/destinationCodes" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;destinationCodeId&#34;],   &#34;valueField&#34;: &#34;destinationCodeId&#34; }" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="deliveryDays" label="Jours de livraison" type="enum">
+            <camunda:properties>
+              <camunda:property id="is_multiselect" value="true" />
+            </camunda:properties>
+            <camunda:value id="monday" name="Lundi" />
+            <camunda:value id="tuesday" name="Mardi" />
+            <camunda:value id="wednesday" name="Mercredi" />
+            <camunda:value id="thursday" name="Jeudi" />
+            <camunda:value id="friday" name="Vendredi" />
+            <camunda:value id="saturday" name="Samedi" />
+            <camunda:value id="sunday" name="Dimanche" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=true;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_09vq0q2</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1o2isvs</bpmn2:outgoing>
+    </bpmn2:userTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_06ibakk">
+      <bpmndi:BPMNShape id="Participant_1csethe_di" bpmnElement="Participant_1csethe" isHorizontal="true">
+        <dc:Bounds x="-695" y="-85" width="1280" height="425" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_025v2wr_di" bpmnElement="Lane_025v2wr" isHorizontal="true">
+        <dc:Bounds x="-665" y="-85" width="1250" height="425" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1fg8idk_di" bpmnElement="Flow_1fg8idk">
+        <di:waypoint x="-215" y="95" />
+        <di:waypoint x="-215" y="23" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-211" y="53" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sld8p8_di" bpmnElement="Flow_1sld8p8">
+        <di:waypoint x="345" y="80" />
+        <di:waypoint x="345" y="15" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o2isvs_di" bpmnElement="Flow_1o2isvs">
+        <di:waypoint x="250" y="120" />
+        <di:waypoint x="295" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_054i6e5_di" bpmnElement="Flow_054i6e5">
+        <di:waypoint x="55" y="145" />
+        <di:waypoint x="55" y="215" />
+        <di:waypoint x="-505" y="215" />
+        <di:waypoint x="-505" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="62" y="176" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09vq0q2_di" bpmnElement="Flow_09vq0q2">
+        <di:waypoint x="80" y="120" />
+        <di:waypoint x="150" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="92" y="102" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06au8rm_di" bpmnElement="Flow_06au8rm">
+        <di:waypoint x="-15" y="120" />
+        <di:waypoint x="30" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e1m9m9_di" bpmnElement="Flow_1e1m9m9">
+        <di:waypoint x="-215" y="145" />
+        <di:waypoint x="-215" y="205" />
+        <di:waypoint x="-505" y="205" />
+        <di:waypoint x="-505" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-203" y="161" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l157ia_di" bpmnElement="Flow_1l157ia">
+        <di:waypoint x="-190" y="120" />
+        <di:waypoint x="-115" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-176" y="103" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gzdmf3_di" bpmnElement="Flow_0gzdmf3">
+        <di:waypoint x="-607" y="120" />
+        <di:waypoint x="-555" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_091rul1_di" bpmnElement="Flow_091rul1">
+        <di:waypoint x="-455" y="120" />
+        <di:waypoint x="-395" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19facj8_di" bpmnElement="Flow_19facj8">
+        <di:waypoint x="-295" y="120" />
+        <di:waypoint x="-240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zai1jm_di" bpmnElement="Flow_0zai1jm">
+        <di:waypoint x="395" y="120" />
+        <di:waypoint x="445" y="120" />
+        <di:waypoint x="445" y="227" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="-643" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-637" y="145" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0omoc7g_di" bpmnElement="Activity_Init_Request">
+        <dc:Bounds x="-555" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w0db4p_di" bpmnElement="Activity_Validation_RC">
+        <dc:Bounds x="-395" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1h520yz_di" bpmnElement="Activity_Ref">
+        <dc:Bounds x="295" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kfvkok_di" bpmnElement="event_end">
+        <dc:Bounds x="427" y="227" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="435" y="270" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0sj4z2z_di" bpmnElement="Gateway_Validation_DAF" isMarkerVisible="true">
+        <dc:Bounds x="30" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_170vhhf_di" bpmnElement="sendRequesterNotification">
+        <dc:Bounds x="295" y="-65" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0oe1bqf_di" bpmnElement="Gateway_Validation_RC" isMarkerVisible="true">
+        <dc:Bounds x="-240" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d6weid_di" bpmnElement="Activity_Validation_DAF">
+        <dc:Bounds x="-115" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eheyl2_di" bpmnElement="event_closed">
+        <dc:Bounds x="-233" y="-13" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-232" y="-32" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pixkce_di" bpmnElement="Activity_Logistic">
+        <dc:Bounds x="150" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

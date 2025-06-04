@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_13q0jpy">
+    <bpmn2:participant id="Participant_0k36mwj" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:sequenceFlow id="Flow_1scbuaw" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
+    <bpmn2:sequenceFlow id="Flow_0uk5z4s" sourceRef="Activity_Init_Request" targetRef="Gateway_1usqeoc" />
+    <bpmn2:sequenceFlow id="Flow_0o94i3v" sourceRef="Gateway_1usqeoc" targetRef="Activity_Validation_CDG_IND">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.branch.includes("industrie")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1q0nxcs" sourceRef="Gateway_1usqeoc" targetRef="Activity_Validation_CDG_Distrib">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.branch.includes("distrib")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1sdailc" sourceRef="Gateway_1usqeoc" targetRef="Activity_Validation_CDG_Retail">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.branch.includes("retail")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:formKey="Form_Initiation" camunda:assignee="$data.requester">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="trading" label="Négoce" type="boolean" />
+          <camunda:formField id="branch" label="Branche" type="enum">
+            <camunda:properties>
+              <camunda:property id="is_multiselect" value="true" />
+            </camunda:properties>
+            <camunda:value id="industrie" name="Industrie" />
+            <camunda:value id="distrib" name="Distrib" />
+            <camunda:value id="retail" name="Retail" />
+          </camunda:formField>
+          <camunda:formField id="company" label="Société" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/companies" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="code_article" label="Code Article" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="{ &#34;url&#34;: &#34;/articles/:companyName&#34;, &#34;params&#34;: { &#34;companyName&#34;: &#34;company&#34; } }" />
+              <camunda:property id="mapping" value="code" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="name_article" label="Nom Article" type="string">
+            <camunda:properties>
+              <camunda:property id="readonly" value="true" />
+              <camunda:property id="mapping" value="name" />
+              <camunda:property id="dependsOn" value="code_article" />
+              <camunda:property id="compareField" value="code" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="code_supplier" label="Code Fournisseur" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="{ &#34;url&#34;: &#34;/suppliers/:companyName&#34;, &#34;params&#34;: { &#34;companyName&#34;: &#34;company&#34; } }" />
+              <camunda:property id="mapping" value="accountnum" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="current_price" label="Ancien prix" type="float" />
+          <camunda:formField id="new_price" label="Nouveau prix" type="float" />
+          <camunda:formField id="variation" label="Variation en %" type="float" />
+          <camunda:formField id="financial_impact" label="Impact financier" type="float" />
+        </camunda:formData>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.name_article;</camunda:script>
+        </camunda:executionListener>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1scbuaw</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1fbcf1w</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1prf8ec</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0dzjm40</bpmn2:incoming>
+      <bpmn2:incoming>Flow_04wequd</bpmn2:incoming>
+      <bpmn2:incoming>Flow_05trup5</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0uk5z4s</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:startEvent id="StartEvent_1" name="Start" camunda:initiator="requester">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.startDate=this.startedAt;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_1scbuaw</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_Validation_CDG_IND_Done" sourceRef="Activity_Validation_CDG_IND" targetRef="Gateway_Parallel_Join" />
+    <bpmn2:sequenceFlow id="Flow_Validation_CDG_Distrib_Done" sourceRef="Activity_Validation_CDG_Distrib" targetRef="Gateway_Parallel_Join" />
+    <bpmn2:sequenceFlow id="Flow_Validation_CDG_Retail_Done" sourceRef="Activity_Validation_CDG_Retail" targetRef="Gateway_Parallel_Join" />
+    <bpmn2:sequenceFlow id="Flow_To_Check_Strategic" sourceRef="Gateway_Parallel_Join" targetRef="Gateway_0ltg5my" />
+    <bpmn2:sequenceFlow id="Flow_To_Exclusive_Gateway" sourceRef="ServiceTask_Check_Strategic" targetRef="Gateway_Strategic_Check" />
+    <bpmn2:sequenceFlow id="Flow_Strategic_Yes" sourceRef="Gateway_Strategic_Check" targetRef="Gateway_Increase_Check1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.isStrategic == true</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_Strategic_No" sourceRef="Gateway_Strategic_Check" targetRef="Gateway_Increase_Check2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.isStrategic == false</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="Gateway_Strategic_Check">
+      <bpmn2:incoming>Flow_To_Exclusive_Gateway</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Strategic_Yes</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_Strategic_No</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:inclusiveGateway id="Gateway_1usqeoc">
+      <bpmn2:incoming>Flow_0uk5z4s</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0o94i3v</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1q0nxcs</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1sdailc</bpmn2:outgoing>
+    </bpmn2:inclusiveGateway>
+    <bpmn2:exclusiveGateway id="Gateway_Increase_Check1">
+      <bpmn2:incoming>Flow_Strategic_Yes</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Strategic_Increase_Yes</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_Strategic_Increase_No</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_Strategic_Increase_Yes" sourceRef="Gateway_Increase_Check1" targetRef="UserTask_Validation_CDG_Central1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.total_impact_industrie &gt; 10000 || data.total_impact_distrib &gt; 10000 || data.total_impact_retail &gt; 10000</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1ni25ud" sourceRef="UserTask_Validation_CDG_Central1" targetRef="Gateway_Validation_Check" />
+    <bpmn2:exclusiveGateway id="Gateway_Increase_Check2">
+      <bpmn2:incoming>Flow_Strategic_No</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Increase_Yes</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_Increase_No</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="UserTask_Validation_CDG_Central3" name="Validation CDG Central" camunda:formKey="Form_CDG_Central3" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="validation_cdg_central" label="Validation" type="validation" />
+          <camunda:formField id="comment_cdg_central" label="Commentaire" type="text" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Increase_Yes</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1dn0sgq</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="UserTask_Ref4" name="Référencement" camunda:formKey="Form_Ref4" camunda:candidateGroups="REF">
+      <bpmn2:extensionElements>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="comment_ref" label="Commentaire" type="text" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Increase_No</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_09u0h5a</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1dn0sgq" sourceRef="UserTask_Validation_CDG_Central3" targetRef="Gateway_1202oc4" />
+    <bpmn2:sequenceFlow id="Flow_0jtr40w" sourceRef="UserTask_Ref3" targetRef="EndEvent_1" />
+    <bpmn2:sequenceFlow id="Flow_09u0h5a" sourceRef="UserTask_Ref4" targetRef="EndEvent_1" />
+    <bpmn2:sequenceFlow id="Flow_Increase_Yes" sourceRef="Gateway_Increase_Check2" targetRef="UserTask_Validation_CDG_Central3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.total_impact_industrie &gt; 10000 || data.total_impact_distrib &gt; 10000 || data.total_impact_retail &gt; 10000</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_Increase_No" sourceRef="Gateway_Increase_Check2" targetRef="UserTask_Ref4" />
+    <bpmn2:sequenceFlow id="Flow_Strategic_Increase_No" sourceRef="Gateway_Increase_Check1" targetRef="UserTask_Validation_CDG_Central2" />
+    <bpmn2:userTask id="UserTask_Validation_CDG_Central2" name="Validation CDG Central" camunda:formKey="Form_CDG_Central2" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_cdg_central" label="Validation" type="validation" />
+          <camunda:formField id="comment_cdg_central" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Strategic_Increase_No</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0f0mbof</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="UserTask_Validation_CDG_Central1" name="Validation CDG Central" camunda:formKey="Form_CDG_Central1" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_cdg_central" label="Validation" type="validation" />
+          <camunda:formField id="comment_cdg_central" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Strategic_Increase_Yes</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1ni25ud</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0f0mbof" sourceRef="UserTask_Validation_CDG_Central2" targetRef="Gateway_0lf8gae" />
+    <bpmn2:sequenceFlow id="Flow_1fbcf1w" sourceRef="Gateway_Validation_Check" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_cdg_central==false)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1858hro" sourceRef="Gateway_Validation_Check" targetRef="Gateway_Branch_Manager">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_cdg_central==true)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:inclusiveGateway id="Gateway_Branch_Manager">
+      <bpmn2:incoming>Flow_1858hro</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Branch_Manager_IND</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_Branch_Manager_Distrib</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_Branch_Manager_Retail</bpmn2:outgoing>
+    </bpmn2:inclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_Branch_Manager_IND" sourceRef="Gateway_Branch_Manager" targetRef="UserTask_Branch_Manager_IND">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.branch.includes("industrie")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1p4gvgr" sourceRef="UserTask_Branch_Manager_IND" targetRef="Gateway_03zak1d" />
+    <bpmn2:sequenceFlow id="Flow_Branch_Manager_Distrib" sourceRef="Gateway_Branch_Manager" targetRef="UserTask_Branch_Manager_Distrib">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.branch.includes("distrib")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_Branch_Manager_Retail" sourceRef="Gateway_Branch_Manager" targetRef="UserTask_Branch_Manager_Retail">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.branch.includes("retail")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0sv69xi" sourceRef="UserTask_Branch_Manager_Distrib" targetRef="Gateway_03zak1d" />
+    <bpmn2:sequenceFlow id="Flow_00frx4c" sourceRef="UserTask_Branch_Manager_Retail" targetRef="Gateway_03zak1d" />
+    <bpmn2:sequenceFlow id="Flow_1prf8ec" sourceRef="Gateway_1jw0gr5" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.validation_db_ind == false || 
+data.validation_db_distrib == false || 
+data.validation_db_retail == false</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="Gateway_Validation_Check">
+      <bpmn2:incoming>Flow_1ni25ud</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1fbcf1w</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1858hro</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="UserTask_Branch_Manager_IND" name="Validation DIRECTEUR BRANCHE IND" camunda:formKey="Form_DB_IND">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_db_ind" label="Validation" type="validation" />
+          <camunda:formField id="comment_db_ind" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Branch_Manager_IND</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1p4gvgr</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="UserTask_Branch_Manager_Distrib" name="Validation DIRECTEUR BRANCHE DISTRIB" camunda:formKey="Form_DB_DISTRIB">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_db_distrib" label="Validation" type="validation" />
+          <camunda:formField id="comment_db_distrib" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Branch_Manager_Distrib</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0sv69xi</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1qgo6sk" sourceRef="Gateway_03zak1d" targetRef="Gateway_1jw0gr5" />
+    <bpmn2:sequenceFlow id="Flow_130a2ux" sourceRef="UserTask_Ref1" targetRef="EndEvent_1" />
+    <bpmn2:sequenceFlow id="Flow_11robdo" sourceRef="UserTask_Ref2" targetRef="EndEvent_1" />
+    <bpmn2:userTask id="UserTask_Ref2" name="Référencement" camunda:formKey="Form_Ref2" camunda:candidateGroups="REF">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="comment_ref" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_08urlrn</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_11robdo</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="Gateway_0lf8gae">
+      <bpmn2:incoming>Flow_0f0mbof</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0dzjm40</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_08urlrn</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_0dzjm40" sourceRef="Gateway_0lf8gae" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_cdg_central==false)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_08urlrn" sourceRef="Gateway_0lf8gae" targetRef="UserTask_Ref2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_cdg_central==true)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="UserTask_Ref3" name="Référencement" camunda:formKey="Form_Ref3" camunda:candidateGroups="REF">
+      <bpmn2:extensionElements>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="comment_ref" label="Commentaire" type="text" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0h0ynqp</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0jtr40w</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="Gateway_1202oc4">
+      <bpmn2:incoming>Flow_1dn0sgq</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0h0ynqp</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_04wequd</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_0h0ynqp" sourceRef="Gateway_1202oc4" targetRef="UserTask_Ref3">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_cdg_central==true)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_04wequd" sourceRef="Gateway_1202oc4" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validation_cdg_central==false)</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:parallelGateway id="Gateway_03zak1d">
+      <bpmn2:incoming>Flow_1p4gvgr</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0sv69xi</bpmn2:incoming>
+      <bpmn2:incoming>Flow_00frx4c</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1qgo6sk</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:sequenceFlow id="Flow_0wxn58x" sourceRef="Gateway_1jw0gr5" targetRef="UserTask_Ref1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.validation_db_ind != false &amp;&amp; 
+data.validation_db_distrib != false &amp;&amp; 
+data.validation_db_retail != false</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="Gateway_1jw0gr5">
+      <bpmn2:incoming>Flow_1qgo6sk</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1prf8ec</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0wxn58x</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="UserTask_Ref1" name="Référencement" camunda:formKey="Form_Ref1">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="comment_ref" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0wxn58x</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_130a2ux</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="EndEvent_1" name="&#10;">
+      <bpmn2:incoming>Flow_09u0h5a</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0jtr40w</bpmn2:incoming>
+      <bpmn2:incoming>Flow_130a2ux</bpmn2:incoming>
+      <bpmn2:incoming>Flow_11robdo</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:userTask id="UserTask_Branch_Manager_Retail" name="Validation DIRECTEUR BRANCHE RETAIL" camunda:formKey="Form_DB_RETAIL">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_db_retail" label="Validation" type="validation" />
+          <camunda:formField id="comment_db_retail" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_Branch_Manager_Retail</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_00frx4c</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:serviceTask id="ServiceTask_Check_Strategic" name="Check if Article is Strategic" camunda:delegateExpression="CheckStrategicArticle">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="code_article">$(data.code_article)</camunda:inputParameter>
+        </camunda:inputOutput>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">console.log('Process Data:', data);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_08wbrvk</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_To_Exclusive_Gateway</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:parallelGateway id="Gateway_Parallel_Join">
+      <bpmn2:incoming>Flow_Validation_CDG_IND_Done</bpmn2:incoming>
+      <bpmn2:incoming>Flow_Validation_CDG_Distrib_Done</bpmn2:incoming>
+      <bpmn2:incoming>Flow_Validation_CDG_Retail_Done</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_To_Check_Strategic</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:sequenceFlow id="Flow_08wbrvk" sourceRef="Gateway_0ltg5my" targetRef="ServiceTask_Check_Strategic">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.validation_cdg_ind != false &amp;&amp; 
+data.validation_cdg_distrib != false &amp;&amp; 
+data.validation_cdg_retail != false</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="Gateway_0ltg5my">
+      <bpmn2:incoming>Flow_To_Check_Strategic</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_08wbrvk</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_05trup5</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_05trup5" sourceRef="Gateway_0ltg5my" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.validation_cdg_ind == false || 
+data.validation_cdg_distrib == false || 
+data.validation_cdg_retail == false</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="Activity_Validation_CDG_IND" name="Validation CDG INDUSTRIE" camunda:formKey="Form_CDG_IND" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_cdg_ind" label="Validation" type="validation" />
+          <camunda:formField id="comment_cdg_ind" label="Commentaire" type="text" />
+          <camunda:formField id="total_impact_industrie" label="Impact Total" type="float" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0o94i3v</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Validation_CDG_IND_Done</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Activity_Validation_CDG_Distrib" name="Validation CDG DISTRIB" camunda:formKey="Form_CDG_DISTRIB" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_cdg_distrib" label="Validation" type="validation" />
+          <camunda:formField id="comment_cdg_distrib" label="Commentaire" type="text" />
+          <camunda:formField id="total_impact_distrib" label="Impact Total" type="float" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1q0nxcs</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Validation_CDG_Distrib_Done</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Activity_Validation_CDG_Retail" name="Validation CDG RETAIL" camunda:formKey="Form_CDG_RETAIL" camunda:candidateGroups="CDG">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validation_cdg_retail" label="Validation" type="validation" />
+          <camunda:formField id="comment_cdg_retail" label="Commentaire" type="text" />
+          <camunda:formField id="total_impact_retail" label="Impact Total" type="float" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1sdailc</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Validation_CDG_Retail_Done</bpmn2:outgoing>
+    </bpmn2:userTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_13q0jpy">
+      <bpmndi:BPMNShape id="Participant_0k36mwj_di" bpmnElement="Participant_0k36mwj" isHorizontal="true">
+        <dc:Bounds x="130" y="-270" width="2540" height="970" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_05trup5_di" bpmnElement="Flow_05trup5">
+        <di:waypoint x="880" y="285" />
+        <di:waypoint x="880" y="440" />
+        <di:waypoint x="350" y="440" />
+        <di:waypoint x="350" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08wbrvk_di" bpmnElement="Flow_08wbrvk">
+        <di:waypoint x="905" y="260" />
+        <di:waypoint x="950" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wxn58x_di" bpmnElement="Flow_0wxn58x">
+        <di:waypoint x="2065" y="-30" />
+        <di:waypoint x="2100" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04wequd_di" bpmnElement="Flow_04wequd">
+        <di:waypoint x="1600" y="475" />
+        <di:waypoint x="1600" y="640" />
+        <di:waypoint x="350" y="640" />
+        <di:waypoint x="350" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h0ynqp_di" bpmnElement="Flow_0h0ynqp">
+        <di:waypoint x="1625" y="450" />
+        <di:waypoint x="1720" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08urlrn_di" bpmnElement="Flow_08urlrn">
+        <di:waypoint x="1575" y="270" />
+        <di:waypoint x="1710" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dzjm40_di" bpmnElement="Flow_0dzjm40">
+        <di:waypoint x="1550" y="245" />
+        <di:waypoint x="1550" y="80" />
+        <di:waypoint x="350" y="80" />
+        <di:waypoint x="350" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11robdo_di" bpmnElement="Flow_11robdo">
+        <di:waypoint x="1810" y="270" />
+        <di:waypoint x="2212" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_130a2ux_di" bpmnElement="Flow_130a2ux">
+        <di:waypoint x="2200" y="-30" />
+        <di:waypoint x="2230" y="-30" />
+        <di:waypoint x="2230" y="252" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qgo6sk_di" bpmnElement="Flow_1qgo6sk">
+        <di:waypoint x="1955" y="-30" />
+        <di:waypoint x="2015" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1prf8ec_di" bpmnElement="Flow_1prf8ec">
+        <di:waypoint x="2040" y="-55" />
+        <di:waypoint x="2040" y="-190" />
+        <di:waypoint x="350" y="-190" />
+        <di:waypoint x="350" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00frx4c_di" bpmnElement="Flow_00frx4c">
+        <di:waypoint x="1830" y="80" />
+        <di:waypoint x="1930" y="80" />
+        <di:waypoint x="1930" y="-5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sv69xi_di" bpmnElement="Flow_0sv69xi">
+        <di:waypoint x="1830" y="-30" />
+        <di:waypoint x="1905" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17k8w7l_di" bpmnElement="Flow_Branch_Manager_Retail">
+        <di:waypoint x="1620" y="-5" />
+        <di:waypoint x="1620" y="80" />
+        <di:waypoint x="1730" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00ko715_di" bpmnElement="Flow_Branch_Manager_Distrib">
+        <di:waypoint x="1645" y="-30" />
+        <di:waypoint x="1730" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p4gvgr_di" bpmnElement="Flow_1p4gvgr">
+        <di:waypoint x="1830" y="-140" />
+        <di:waypoint x="1930" y="-140" />
+        <di:waypoint x="1930" y="-55" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dyfnqp_di" bpmnElement="Flow_Branch_Manager_IND">
+        <di:waypoint x="1620" y="-55" />
+        <di:waypoint x="1620" y="-140" />
+        <di:waypoint x="1730" y="-140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1858hro_di" bpmnElement="Flow_1858hro">
+        <di:waypoint x="1555" y="-30" />
+        <di:waypoint x="1595" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fbcf1w_di" bpmnElement="Flow_1fbcf1w">
+        <di:waypoint x="1530" y="-55" />
+        <di:waypoint x="1530" y="-110" />
+        <di:waypoint x="350" y="-110" />
+        <di:waypoint x="350" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f0mbof_di" bpmnElement="Flow_0f0mbof">
+        <di:waypoint x="1460" y="270" />
+        <di:waypoint x="1525" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mu2paq_di" bpmnElement="Flow_Strategic_Increase_No">
+        <di:waypoint x="1240" y="165" />
+        <di:waypoint x="1240" y="270" />
+        <di:waypoint x="1360" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fzgknb_di" bpmnElement="Flow_Increase_No">
+        <di:waypoint x="1250" y="542" />
+        <di:waypoint x="1250" y="577" />
+        <di:waypoint x="1360" y="577" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wrrv9d_di" bpmnElement="Flow_Increase_Yes">
+        <di:waypoint x="1250" y="492" />
+        <di:waypoint x="1250" y="450" />
+        <di:waypoint x="1360" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09u0h5a_di" bpmnElement="Flow_09u0h5a">
+        <di:waypoint x="1460" y="577" />
+        <di:waypoint x="2230" y="577" />
+        <di:waypoint x="2230" y="288" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jtr40w_di" bpmnElement="Flow_0jtr40w">
+        <di:waypoint x="1820" y="450" />
+        <di:waypoint x="2230" y="450" />
+        <di:waypoint x="2230" y="288" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dn0sgq_di" bpmnElement="Flow_1dn0sgq">
+        <di:waypoint x="1460" y="450" />
+        <di:waypoint x="1575" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ni25ud_di" bpmnElement="Flow_1ni25ud">
+        <di:waypoint x="1460" y="-30" />
+        <di:waypoint x="1505" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t2mtel_di" bpmnElement="Flow_Strategic_Increase_Yes">
+        <di:waypoint x="1240" y="115" />
+        <di:waypoint x="1240" y="-30" />
+        <di:waypoint x="1360" y="-30" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kpri41_di" bpmnElement="Flow_Strategic_No">
+        <di:waypoint x="1120" y="285" />
+        <di:waypoint x="1120" y="517" />
+        <di:waypoint x="1225" y="517" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pexdy4_di" bpmnElement="Flow_Strategic_Yes">
+        <di:waypoint x="1120" y="235" />
+        <di:waypoint x="1120" y="140" />
+        <di:waypoint x="1215" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ipdft2_di" bpmnElement="Flow_To_Exclusive_Gateway">
+        <di:waypoint x="1050" y="260" />
+        <di:waypoint x="1095" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dxeea7_di" bpmnElement="Flow_To_Check_Strategic">
+        <di:waypoint x="815" y="260" />
+        <di:waypoint x="855" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16gp3m4_di" bpmnElement="Flow_Validation_CDG_Retail_Done">
+        <di:waypoint x="700" y="370" />
+        <di:waypoint x="790" y="370" />
+        <di:waypoint x="790" y="285" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19kj8hp_di" bpmnElement="Flow_Validation_CDG_Distrib_Done">
+        <di:waypoint x="700" y="260" />
+        <di:waypoint x="765" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09de5y6_di" bpmnElement="Flow_Validation_CDG_IND_Done">
+        <di:waypoint x="700" y="150" />
+        <di:waypoint x="790" y="150" />
+        <di:waypoint x="790" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sdailc_di" bpmnElement="Flow_1sdailc">
+        <di:waypoint x="510" y="285" />
+        <di:waypoint x="510" y="370" />
+        <di:waypoint x="600" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q0nxcs_di" bpmnElement="Flow_1q0nxcs">
+        <di:waypoint x="535" y="260" />
+        <di:waypoint x="600" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o94i3v_di" bpmnElement="Flow_0o94i3v">
+        <di:waypoint x="510" y="235" />
+        <di:waypoint x="510" y="150" />
+        <di:waypoint x="600" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uk5z4s_di" bpmnElement="Flow_0uk5z4s">
+        <di:waypoint x="400" y="260" />
+        <di:waypoint x="485" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1scbuaw_di" bpmnElement="Flow_1scbuaw">
+        <di:waypoint x="218" y="260" />
+        <di:waypoint x="300" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1bf7v7d_di" bpmnElement="Activity_Init_Request">
+        <dc:Bounds x="300" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="188" y="285" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rx4tl3_di" bpmnElement="Gateway_Strategic_Check" isMarkerVisible="true">
+        <dc:Bounds x="1095" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0uqoskm_di" bpmnElement="Gateway_1usqeoc">
+        <dc:Bounds x="485" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1bark98_di" bpmnElement="Gateway_Increase_Check1" isMarkerVisible="true">
+        <dc:Bounds x="1215" y="115" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1jz5kxk_di" bpmnElement="Gateway_Increase_Check2" isMarkerVisible="true">
+        <dc:Bounds x="1225" y="492" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vgv2tr_di" bpmnElement="UserTask_Validation_CDG_Central3">
+        <dc:Bounds x="1360" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c056uy_di" bpmnElement="UserTask_Ref4">
+        <dc:Bounds x="1360" y="537" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_012dmcf_di" bpmnElement="UserTask_Validation_CDG_Central2">
+        <dc:Bounds x="1360" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tzdqkg_di" bpmnElement="UserTask_Validation_CDG_Central1">
+        <dc:Bounds x="1360" y="-70" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jsckwl_di" bpmnElement="Gateway_Branch_Manager">
+        <dc:Bounds x="1595" y="-55" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0nvibp2_di" bpmnElement="Gateway_Validation_Check" isMarkerVisible="true">
+        <dc:Bounds x="1505" y="-55" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0b7hbs4_di" bpmnElement="UserTask_Branch_Manager_IND">
+        <dc:Bounds x="1730" y="-180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0co27y6_di" bpmnElement="UserTask_Branch_Manager_Distrib">
+        <dc:Bounds x="1730" y="-70" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ns8494_di" bpmnElement="UserTask_Ref2">
+        <dc:Bounds x="1710" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0lf8gae_di" bpmnElement="Gateway_0lf8gae" isMarkerVisible="true">
+        <dc:Bounds x="1525" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tr2s48_di" bpmnElement="UserTask_Ref3">
+        <dc:Bounds x="1720" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1202oc4_di" bpmnElement="Gateway_1202oc4" isMarkerVisible="true">
+        <dc:Bounds x="1575" y="425" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vmjfe8_di" bpmnElement="Gateway_03zak1d">
+        <dc:Bounds x="1905" y="-55" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1jw0gr5_di" bpmnElement="Gateway_1jw0gr5" isMarkerVisible="true">
+        <dc:Bounds x="2015" y="-55" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gxiryw_di" bpmnElement="UserTask_Ref1">
+        <dc:Bounds x="2100" y="-70" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0eqry79_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="2212" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2303" y="260" width="0" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pbt255_di" bpmnElement="UserTask_Branch_Manager_Retail">
+        <dc:Bounds x="1730" y="40" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m0mcnt_di" bpmnElement="ServiceTask_Check_Strategic">
+        <dc:Bounds x="950" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0o88tag_di" bpmnElement="Gateway_Parallel_Join">
+        <dc:Bounds x="765" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ltg5my_di" bpmnElement="Gateway_0ltg5my" isMarkerVisible="true">
+        <dc:Bounds x="855" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0irn8vj_di" bpmnElement="Activity_Validation_CDG_IND">
+        <dc:Bounds x="600" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tagdtx_di" bpmnElement="Activity_Validation_CDG_Distrib">
+        <dc:Bounds x="600" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14gpdkv_di" bpmnElement="Activity_Validation_CDG_Retail">
+        <dc:Bounds x="600" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

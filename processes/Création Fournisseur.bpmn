@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:signal id="cancelSignal" name="Cancel Signal" />
+  <bpmn2:collaboration id="Collaboration_1kfn7th">
+    <bpmn2:participant id="Participant_1skzouw" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT,RH,MKT,FINANCE">
+    <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:assignee="$data.requester">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="dataArea" label="Société" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="is_multiselect" value="true" />
+              <camunda:property id="endpoint" value="/dataareas" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;name&#34;],   &#34;valueField&#34;: &#34;name&#34; }" />
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="vendorName" label="Nom fournisseur" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+              <camunda:property id="is_subject" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="address" label="Adresse" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="postalCode" label="Code Postale" type="string" />
+          <camunda:formField id="city" label="Ville" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="country" label="Pays" type="string" />
+          <camunda:formField id="phone" label="Téléphone" type="long" />
+          <camunda:formField id="fax" label="Fax" type="string" />
+          <camunda:formField id="mail" label="Mail" type="string" />
+          <camunda:formField id="currency" label="Devise" type="enum">
+            <camunda:value id="mad" name="MAD" />
+            <camunda:value id="eur" name="EUR" />
+            <camunda:value id="usd" name="USD" />
+            <camunda:value id="cad" name="CAD" />
+          </camunda:formField>
+          <camunda:formField id="paymentTerm" label="Condition de paiement" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/paymentTerms" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;paymTermId&#34;],   &#34;valueField&#34;: &#34;paymTermId&#34; }" />
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="paymentMode" label="Mode de paiement" type="dynamic_enum">
+            <camunda:properties>
+              <camunda:property id="endpoint" value="/paymentModes" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;paymMode&#34;],   &#34;valueField&#34;: &#34;paymMode&#34; }" />
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="RIB" label="RIB" type="string">
+            <camunda:properties>
+              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;frs_payment_mode&#34;, &#34;value&#34;: &#34;Virement&#34;}" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="min" config="24" />
+              <camunda:constraint name="max" config="24" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="RIBDOC" label="Attestation RIB" type="file">
+            <camunda:properties>
+              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;frs_payment_mode&#34;, &#34;value&#34;: &#34;Virement&#34;}" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="IF" label="IF" type="long" />
+          <camunda:formField id="CNSS_CIN" label="CNSS/CIN" type="long" />
+          <camunda:formField id="TAX" label="Taxe professionnelle" type="long" />
+          <camunda:formField id="RC" label="RC" type="long" />
+          <camunda:formField id="ICE" label="ICE" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="min" config="15" />
+              <camunda:constraint name="max" config="15" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="comment" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.vendorName;</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=false;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_start_creation_request</bpmn2:incoming>
+      <bpmn2:incoming>Flow_not_validated</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0a6g1qb</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Activity_Validation_DAF" name="Validation DAF" camunda:candidateGroups="DAF" camunda:dueDate="$this.dueDate">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validationDAF" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,require_info" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentDAF" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=true;
+appServices.calculateDueDate({days:1},this);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0a6g1qb</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0szpqmc</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Activity_Ref" name="Référencement" camunda:candidateGroups="REF" camunda:dueDate="$this.dueDate">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="commentREF" label="Commentaire" type="text" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars.sendNotif=true;
+appServices.calculateDueDate({days:1},this);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_validated</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1ptoc5t</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1wsngwu</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1ptoc5t" sourceRef="Activity_Ref" targetRef="sendRequesterNotification" />
+    <bpmn2:sequenceFlow id="Flow_validated" name="Approved" sourceRef="Gateway_0q1oxcg" targetRef="Activity_Ref">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="approve")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_not_validated" name="Information Required" sourceRef="Gateway_0q1oxcg" targetRef="Activity_Init_Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="require_info")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0szpqmc" sourceRef="Activity_Validation_DAF" targetRef="Gateway_0q1oxcg" />
+    <bpmn2:sequenceFlow id="Flow_0a6g1qb" sourceRef="Activity_Init_Request" targetRef="Activity_Validation_DAF" />
+    <bpmn2:sequenceFlow id="Flow_start_creation_request" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
+    <bpmn2:startEvent id="StartEvent_1" name="Start" camunda:initiator="requester" camunda:candidateGroups="ACHAT">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.startDate=this.startedAt;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_start_creation_request</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_1wsngwu" sourceRef="Activity_Ref" targetRef="End_Event" />
+    <bpmn2:endEvent id="End_Event" name="End">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.endDate=this.endedAt;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1wsngwu</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:serviceTask id="sendRequesterNotification" name="Send Notification to Requester" camunda:delegateExpression="sendEmail">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="to">$(data.requester)</camunda:inputParameter>
+          <camunda:inputParameter name="subject">Création fournisseur confirmée</camunda:inputParameter>
+          <camunda:inputParameter name="text">
+            <camunda:script scriptFormat="JavaScript">"Bonjour,\n\nVotre demande de création de fournisseur " + data.vendorName + " a été traitée avec succès. \nLe fournisseur est désormais disponible dans le système. \n\nCordialement."</camunda:script>
+          </camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1ptoc5t</bpmn2:incoming>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="Flow_0zviipz" sourceRef="Gateway_0q1oxcg" targetRef="sendRequesterNotifDecline">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="require_info")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:inclusiveGateway id="Gateway_0q1oxcg">
+      <bpmn2:incoming>Flow_0szpqmc</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_validated</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_not_validated</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0zviipz</bpmn2:outgoing>
+    </bpmn2:inclusiveGateway>
+    <bpmn2:serviceTask id="sendRequesterNotifDecline" name="Send Notification to Requester (Info Required)" camunda:delegateExpression="sendEmail">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="to">$(data.requester)</camunda:inputParameter>
+          <camunda:inputParameter name="subject">Demande non validée</camunda:inputParameter>
+          <camunda:inputParameter name="text">
+            <camunda:script scriptFormat="JavaScript">"Bonjour,\n\nVotre demande de création de fournisseur " + data.vendorName + " n’a pas été validée. \nNous vous invitons à vérifier les informations soumises et à effectuer les corrections nécessaires. \n\nCordialement."</camunda:script>
+          </camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0zviipz</bpmn2:incoming>
+    </bpmn2:serviceTask>
+  </bpmn2:process>
+  <bpmn2:message id="Message_00ov7kq" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1kfn7th">
+      <bpmndi:BPMNShape id="Participant_1skzouw_di" bpmnElement="Participant_1skzouw" isHorizontal="true">
+        <dc:Bounds x="150" y="-20" width="1140" height="450" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0zviipz_di" bpmnElement="Flow_0zviipz">
+        <di:waypoint x="680" y="225" />
+        <di:waypoint x="680" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wsngwu_di" bpmnElement="Flow_1wsngwu">
+        <di:waypoint x="880" y="200" />
+        <di:waypoint x="962" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xupqhv_di" bpmnElement="Flow_start_creation_request">
+        <di:waypoint x="238" y="200" />
+        <di:waypoint x="300" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a6g1qb_di" bpmnElement="Flow_0a6g1qb">
+        <di:waypoint x="400" y="200" />
+        <di:waypoint x="470" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0szpqmc_di" bpmnElement="Flow_0szpqmc">
+        <di:waypoint x="570" y="200" />
+        <di:waypoint x="655" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dy6n12_di" bpmnElement="Flow_not_validated">
+        <di:waypoint x="680" y="225" />
+        <di:waypoint x="680" y="270" />
+        <di:waypoint x="350" y="270" />
+        <di:waypoint x="350" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="236" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a2gzr5_di" bpmnElement="Flow_validated">
+        <di:waypoint x="705" y="200" />
+        <di:waypoint x="780" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="719" y="182" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ptoc5t_di" bpmnElement="Flow_1ptoc5t">
+        <di:waypoint x="830" y="160" />
+        <di:waypoint x="830" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0c11ddr_di" bpmnElement="Activity_Init_Request">
+        <dc:Bounds x="300" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xduqtr_di" bpmnElement="Activity_Validation_DAF">
+        <dc:Bounds x="470" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19l4myq_di" bpmnElement="Activity_Ref">
+        <dc:Bounds x="780" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="202" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="208" y="225" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14vsspx_di" bpmnElement="End_Event">
+        <dc:Bounds x="962" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="970" y="158" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s7dvof_di" bpmnElement="sendRequesterNotification">
+        <dc:Bounds x="780" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12jbrwi_di" bpmnElement="Gateway_0q1oxcg">
+        <dc:Bounds x="655" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18opdxg_di" bpmnElement="sendRequesterNotifDecline">
+        <dc:Bounds x="630" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
