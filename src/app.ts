@@ -165,7 +165,7 @@ export class WebApp {
         { maxAge: 31557600000 }
       )
     );
-    this.app.use("/bpmn-app", router);
+    this.app.use("/", router);
 
     var Common = require("./routes/common");
 
@@ -176,12 +176,12 @@ export class WebApp {
     var API = require("./routes/api").API;
     var API2 = require("./routes/api2").API2;
 
-    this.app.use("/bpmn-app", new Workflow(this).config());
-    this.app.use("/bpmn-app/wf", new WF(this).config());
-    this.app.use("/bpmn-app/docs", new Docs(this).config());
-    this.app.use("/bpmn-app/model", new Model(this).config());
-    this.app.use("/bpmn-app/api", new API(this).config());
-    this.app.use("/bpmn-app/api2", new API2(this).config());
+    this.app.use("/", new Workflow(this).config());
+    this.app.use("/wf", new WF(this).config());
+    this.app.use("/docs", new Docs(this).config());
+    this.app.use("/model", new Model(this).config());
+    this.app.use("/api", new API(this).config());
+    this.app.use("/api2", new API2(this).config());
   }
 }
 
