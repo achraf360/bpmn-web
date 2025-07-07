@@ -124,14 +124,14 @@ export class UserManager {
 		app.use((req, res, next) => {
 			// After successful login, redirect back to the intended page
 			if (!req.user
-				&& req.path !== '/login'
-				&& req.path !== '/signup'
+				&& req.path !== '/bpmn-app/login'
+				&& req.path !== '/bpmn-app/signup'
 				&& !req.path.match(/^\/auth/)
 				&& !req.path.match(/\./)) {
 				console.log("redirecting to:", req.originalUrl);
 				req.session.returnTo = req.originalUrl;
 			} else if (req.user
-				&& (req.path === '/account' || req.path.match(/^\/api/))) {
+				&& (req.path === '/bpmn-app/account' || req.path.match(/^\/bpmn-web\/api/))) {
 				req.session.returnTo = req.originalUrl;
 			}
 			next();
@@ -144,7 +144,7 @@ export class UserManager {
 	setupRoutes() {
 
 		var Account = require("./routes/account").Account;
-		this.app.use('/', (new Account(this)).config());
+		this.app.use('/bpmn-app', (new Account(this)).config());
 
 	}
 
@@ -152,7 +152,7 @@ export class UserManager {
 		if (req.isAuthenticated()) {
 			return next();
 		}
-		res.redirect('/login');
+		res.redirect('/bpmn-app/login');
 	}
 }
 
