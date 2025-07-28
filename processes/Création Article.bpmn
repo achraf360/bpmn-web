@@ -3,15 +3,12 @@
   <bpmn2:collaboration id="Collaboration_0v2x10e">
     <bpmn2:participant id="Participant_0k7ofgq" processRef="Process_1" />
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="ACHAT">
+  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,IT_OPERATOR">
     <bpmn2:sequenceFlow id="Flow_15zu4it" sourceRef="StartEvent_1" targetRef="UserTask_Init_Request" />
     <bpmn2:sequenceFlow id="Flow_0y5fyqo" sourceRef="UserTask_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
     <bpmn2:sequenceFlow id="Flow_1kzs64u" sourceRef="UserTask_Ref" targetRef="Event_10sawzh" />
     <bpmn2:sequenceFlow id="Flow_19r02f7" sourceRef="UserTask_Ref" targetRef="sendRequesterNotification" />
     <bpmn2:sequenceFlow id="Flow_0q2fne8" name="Approved" sourceRef="Gateway_1evafh9" targetRef="UserTask_Ref">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="approve")</bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="Flow_0x6mlpd" name="Approved" sourceRef="Gateway_1evafh9" targetRef="Activity_1u441v3">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="approve")</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:startEvent id="StartEvent_1" name="Start" camunda:initiator="requester">
@@ -25,6 +22,7 @@
               <camunda:property id="is_multiselect" value="true" />
               <camunda:property id="endpoint" value="/dataareas" />
               <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;name&#34;],   &#34;valueField&#34;: &#34;name&#34; }" />
+              <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
           <camunda:formField id="productName" label="Nom" type="string">
@@ -32,7 +30,12 @@
               <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
+          <camunda:formField id="storable" label="Stockable" type="boolean" />
+          <camunda:formField id="centralized" label="Centralisé" type="boolean" />
           <camunda:formField id="type" label="Type d&#39;article" type="enum">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
             <camunda:value id="MP" name="MP" />
             <camunda:value id="PS" name="PS" />
             <camunda:value id="PM" name="PM" />
@@ -40,12 +43,21 @@
             <camunda:value id="MKT" name="MKT" />
             <camunda:value id="FA" name="FA" />
           </camunda:formField>
-          <camunda:formField id="supplier" label="Fournisseur" type="string" />
-          <camunda:formField id="purchasePrice" label="Prix Achat HT" type="float" />
+          <camunda:formField id="supplier" label="Fournisseur" type="string">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="purchasePrice" label="Prix Achat HT" type="float">
+            <camunda:properties>
+              <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
           <camunda:formField id="taxItemGroup" label="Groupe Taxe Achat" type="dynamic_enum">
             <camunda:properties>
               <camunda:property id="endpoint" value="/taxItemGroups" />
-              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;name&#34;],   &#34;valueField&#34;: &#34;name&#34; }" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;taxItemGroup&#34;],   &#34;valueField&#34;: &#34;taxItemGroup&#34; }" />
+              <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
           <camunda:formField id="multiQtyPurchase" label="Qte Multiple Achat" type="long" />
@@ -68,7 +80,6 @@
               <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;name&#34;],   &#34;valueField&#34;: &#34;name&#34; }" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="storable" label="Stockable" type="boolean" />
         </camunda:formData>
         <camunda:executionListener event="end">
           <camunda:script scriptFormat="JavaScript">data.subject=this.data.productName;</camunda:script>
@@ -91,13 +102,23 @@
     <bpmn2:userTask id="UserTask_Validation_CDG_Central" name="Validation CDG Central" camunda:formKey="Form_DAF" camunda:candidateGroups="CDG">
       <bpmn2:extensionElements>
         <camunda:formData>
-          <camunda:formField id="validationCDG" label="Validation" type="validation" />
+          <camunda:formField id="validationCDG" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,require_info" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
           <camunda:formField id="commentCDG" label="Commentaire" type="text" />
           <camunda:formField id="inventItemGroup" label="Groupe Article" type="dynamic_enum">
             <camunda:properties>
               <camunda:property id="endpoint" value="/inventitemgroups" />
-              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;name&#34;],   &#34;valueField&#34;: &#34;name&#34; }" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;itemGroupId&#34;],   &#34;valueField&#34;: &#34;itemGroupId&#34; }" />
               <camunda:property id="is_required" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="salePrice" label="Prix de vente" type="float">
+            <camunda:properties>
+              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;centralized&#34;, &#34;value&#34;: true}" />
             </camunda:properties>
           </camunda:formField>
         </camunda:formData>
@@ -114,34 +135,9 @@
     <bpmn2:inclusiveGateway id="Gateway_1evafh9">
       <bpmn2:incoming>Flow_0doulw5</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0q2fne8</bpmn2:outgoing>
-      <bpmn2:outgoing>Flow_0x6mlpd</bpmn2:outgoing>
       <bpmn2:outgoing>Flow_02jar8w</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0c5l1tm</bpmn2:outgoing>
     </bpmn2:inclusiveGateway>
-    <bpmn2:serviceTask id="Activity_1u441v3" name="Send Notification to CDG Branch" camunda:delegateExpression="sendEmail">
-      <bpmn2:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="to">
-            <camunda:script scriptFormat="JavaScript">(function() {
-    const to = [];
-    const branch = item.data.branch; // Get the branch from item.data
-    
-    if (Array.isArray(branch)) {
-        if (branch.includes('industrie')) to.push('user_test');
-        if (branch.includes('distrib')) to.push('achraf36');
-        if (branch.includes('retail')) to.push('user_test');
-    }
-    
-    return to;
-})()</camunda:script>
-          </camunda:inputParameter>
-          <camunda:inputParameter name="subject">Validation Création d'article</camunda:inputParameter>
-          <camunda:inputParameter name="text">
-            <camunda:script scriptFormat="JavaScript">"Veuillez noter que la demande de création d'article "+data.productName+" a été validé par le CDG Central"</camunda:script>
-          </camunda:inputParameter>
-        </camunda:inputOutput>
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>Flow_0x6mlpd</bpmn2:incoming>
-    </bpmn2:serviceTask>
     <bpmn2:userTask id="UserTask_Ref" name="Référencement" camunda:formKey="Form_Ref" camunda:candidateGroups="REF">
       <bpmn2:extensionElements>
         <camunda:formData>
@@ -162,11 +158,11 @@
       <bpmn2:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="to">
-            <camunda:script scriptFormat="JavaScript">[data.requester, "achraf36"]</camunda:script>
+            <camunda:script scriptFormat="JavaScript">[data.requester]</camunda:script>
           </camunda:inputParameter>
           <camunda:inputParameter name="subject">Référencement Article</camunda:inputParameter>
           <camunda:inputParameter name="text">
-            <camunda:script scriptFormat="JavaScript">"La demande de création d'article "+data.productName+" a été traité avec succès"</camunda:script>
+            <camunda:script scriptFormat="JavaScript">"Bonjour,\n\nVotre demande de création d'article " + data.vendorName + " a été traitée avec succès. \nL'article est désormais disponible dans le système. \n\nCordialement."</camunda:script>
           </camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
@@ -175,12 +171,31 @@
     <bpmn2:endEvent id="Event_10sawzh">
       <bpmn2:incoming>Flow_1kzs64u</bpmn2:incoming>
     </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_0c5l1tm" sourceRef="Gateway_1evafh9" targetRef="sendRequesterNotifDecline">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="require_info")</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:serviceTask id="sendRequesterNotifDecline" name="Send Notification to Requester (Info Required)" camunda:delegateExpression="sendEmail">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="to">$(data.requester)</camunda:inputParameter>
+          <camunda:inputParameter name="subject">Demande non validée</camunda:inputParameter>
+          <camunda:inputParameter name="text">
+            <camunda:script scriptFormat="JavaScript">"Bonjour,\n\nVotre demande de création d'article " + data.productName+ " n’a pas été validée. \nNous vous invitons à vérifier les informations soumises et à effectuer les corrections nécessaires. \n\nCordialement."</camunda:script>
+          </camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0c5l1tm</bpmn2:incoming>
+    </bpmn2:serviceTask>
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0v2x10e">
       <bpmndi:BPMNShape id="Participant_0k7ofgq_di" bpmnElement="Participant_0k7ofgq" isHorizontal="true">
-        <dc:Bounds x="180" y="90" width="1000" height="400" />
+        <dc:Bounds x="180" y="90" width="1000" height="460" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0c5l1tm_di" bpmnElement="Flow_0c5l1tm">
+        <di:waypoint x="740" y="325" />
+        <di:waypoint x="740" y="410" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02jar8w_di" bpmnElement="Flow_02jar8w">
         <di:waypoint x="740" y="325" />
         <di:waypoint x="740" y="370" />
@@ -193,13 +208,6 @@
       <bpmndi:BPMNEdge id="Flow_0doulw5_di" bpmnElement="Flow_0doulw5">
         <di:waypoint x="610" y="300" />
         <di:waypoint x="715" y="300" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0x6mlpd_di" bpmnElement="Flow_0x6mlpd">
-        <di:waypoint x="740" y="275" />
-        <di:waypoint x="740" y="230" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="746" y="250" width="47" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0q2fne8_di" bpmnElement="Flow_0q2fne8">
         <di:waypoint x="765" y="300" />
@@ -240,9 +248,6 @@
       <bpmndi:BPMNShape id="Gateway_1i01q0y_di" bpmnElement="Gateway_1evafh9">
         <dc:Bounds x="715" y="275" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1hiodnr_di" bpmnElement="Activity_1u441v3">
-        <dc:Bounds x="690" y="150" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0huwo52_di" bpmnElement="UserTask_Ref">
         <dc:Bounds x="840" y="260" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -251,6 +256,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_10sawzh_di" bpmnElement="Event_10sawzh">
         <dc:Bounds x="1002" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uupax3_di" bpmnElement="sendRequesterNotifDecline">
+        <dc:Bounds x="690" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

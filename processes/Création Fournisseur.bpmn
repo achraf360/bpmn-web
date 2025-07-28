@@ -4,7 +4,7 @@
   <bpmn2:collaboration id="Collaboration_1kfn7th">
     <bpmn2:participant id="Participant_1skzouw" processRef="Process_1" />
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT,RH,MKT,FINANCE">
+  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR">
     <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:assignee="$data.requester">
       <bpmn2:extensionElements>
         <camunda:formData>
@@ -59,7 +59,7 @@
           </camunda:formField>
           <camunda:formField id="RIB" label="RIB" type="string">
             <camunda:properties>
-              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;frs_payment_mode&#34;, &#34;value&#34;: &#34;Virement&#34;}" />
+              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;paymentMode&#34;, &#34;value&#34;: &#34;VIREMENT&#34;}" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="min" config="24" />
@@ -68,7 +68,7 @@
           </camunda:formField>
           <camunda:formField id="RIBDOC" label="Attestation RIB" type="file">
             <camunda:properties>
-              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;frs_payment_mode&#34;, &#34;value&#34;: &#34;Virement&#34;}" />
+              <camunda:property id="visibility" value="{&#34;field&#34;: &#34;paymentMode&#34;, &#34;value&#34;: &#34;VIREMENT&#34;}" />
             </camunda:properties>
           </camunda:formField>
           <camunda:formField id="IF" label="IF" type="long" />
