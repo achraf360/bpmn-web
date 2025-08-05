@@ -162,7 +162,7 @@
           </camunda:inputParameter>
           <camunda:inputParameter name="subject">Référencement Article</camunda:inputParameter>
           <camunda:inputParameter name="text">
-            <camunda:script scriptFormat="JavaScript">"Bonjour,\n\nVotre demande de création d'article " + data.vendorName + " a été traitée avec succès. \nL'article est désormais disponible dans le système. \n\nCordialement."</camunda:script>
+            <camunda:script scriptFormat="JavaScript">"Bonjour,\n\nVotre demande de création d'article " + data.productName + " a été traitée avec succès. \nL'article est désormais disponible dans le système. \n\nCordialement."</camunda:script>
           </camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
