@@ -3,9 +3,9 @@
   <bpmn2:collaboration id="Collaboration_0v2x10e">
     <bpmn2:participant id="Participant_0k7ofgq" processRef="Process_1" />
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,IT_OPERATOR">
-    <bpmn2:sequenceFlow id="Flow_15zu4it" sourceRef="StartEvent_1" targetRef="UserTask_Init_Request" />
-    <bpmn2:sequenceFlow id="Flow_0y5fyqo" sourceRef="UserTask_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
+  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,IT_OPERATOR,QHSE_OPERATOR">
+    <bpmn2:sequenceFlow id="Flow_15zu4it" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
+    <bpmn2:sequenceFlow id="Flow_0y5fyqo" sourceRef="Activity_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
     <bpmn2:sequenceFlow id="Flow_1kzs64u" sourceRef="UserTask_Ref" targetRef="Event_10sawzh" />
     <bpmn2:sequenceFlow id="Flow_19r02f7" sourceRef="UserTask_Ref" targetRef="sendRequesterNotification" />
     <bpmn2:sequenceFlow id="Flow_0q2fne8" name="Approved" sourceRef="Gateway_1evafh9" targetRef="UserTask_Ref">
@@ -14,7 +14,7 @@
     <bpmn2:startEvent id="StartEvent_1" name="Start" camunda:initiator="requester">
       <bpmn2:outgoing>Flow_15zu4it</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:userTask id="UserTask_Init_Request" name="Initiation Demande" camunda:formKey="Form_Initiation" camunda:assignee="$data.requester">
+    <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:formKey="Form_Initiation" camunda:assignee="$data.requester">
       <bpmn2:extensionElements>
         <camunda:formData>
           <camunda:formField id="dataArea" label="Société" type="dynamic_enum">
@@ -30,8 +30,8 @@
               <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="storable" label="Stockable" type="boolean" />
-          <camunda:formField id="centralized" label="Centralisé" type="boolean" />
+          <camunda:formField id="storable" label="Stockable" type="boolean" defaultValue="false" />
+          <camunda:formField id="centralized" label="Centralisé" type="boolean" defaultValue="false" />
           <camunda:formField id="type" label="Type d&#39;article" type="enum">
             <camunda:properties>
               <camunda:property id="is_required" value="true" />
@@ -96,7 +96,7 @@
       <bpmn2:outgoing>Flow_0y5fyqo</bpmn2:outgoing>
     </bpmn2:userTask>
     <bpmn2:sequenceFlow id="Flow_0doulw5" sourceRef="UserTask_Validation_CDG_Central" targetRef="Gateway_1evafh9" />
-    <bpmn2:sequenceFlow id="Flow_02jar8w" name="Information Required" sourceRef="Gateway_1evafh9" targetRef="UserTask_Init_Request">
+    <bpmn2:sequenceFlow id="Flow_02jar8w" name="Information Required" sourceRef="Gateway_1evafh9" targetRef="Activity_Init_Request">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="require_info")</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:userTask id="UserTask_Validation_CDG_Central" name="Validation CDG Central" camunda:formKey="Form_DAF" camunda:candidateGroups="CDG">
@@ -239,7 +239,7 @@
           <dc:Bounds x="248" y="325" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0jx4swf_di" bpmnElement="UserTask_Init_Request">
+      <bpmndi:BPMNShape id="Activity_0jx4swf_di" bpmnElement="Activity_Init_Request">
         <dc:Bounds x="340" y="260" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1pdjkjd_di" bpmnElement="UserTask_Validation_CDG_Central">

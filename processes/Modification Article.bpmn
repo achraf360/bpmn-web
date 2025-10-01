@@ -12,7 +12,7 @@
       </bpmn2:extensionElements>
       <bpmn2:outgoing>Flow_0gka79o</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:userTask id="UserTask_Init_Request" name="Initiation Demande" camunda:formKey="Form_Init_Request" camunda:assignee="$data.requester">
+    <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:formKey="Form_Init_Request" camunda:assignee="$data.requester">
       <bpmn2:extensionElements>
         <camunda:formData>
           <camunda:formField id="branch" label="Branche" type="enum">
@@ -76,11 +76,6 @@
               <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="financial_impact" label="Impact financier" type="float">
-            <camunda:properties>
-              <camunda:property id="is_required" value="true" />
-            </camunda:properties>
-          </camunda:formField>
         </camunda:formData>
         <camunda:executionListener event="end">
           <camunda:script scriptFormat="JavaScript">data.subject=this.data.productName;</camunda:script>
@@ -106,6 +101,7 @@
             </camunda:properties>
           </camunda:formField>
           <camunda:formField id="commentCDG" label="Commentaire" type="text" />
+          <camunda:formField id="impactFinancial" label="Tableau marge et impact financier prévisionnel" type="file" />
         </camunda:formData>
         <camunda:taskListener event="validate">
           <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
@@ -127,12 +123,12 @@
     <bpmn2:sequenceFlow id="Flow_CDG_Validate" name="Approved" sourceRef="Gateway_08o9832" targetRef="UserTask_Ref">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="approve")</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="Flow_CDG_Refuse" name="Information Required" sourceRef="Gateway_08o9832" targetRef="UserTask_Init_Request">
+    <bpmn2:sequenceFlow id="Flow_CDG_Refuse" name="Information Required" sourceRef="Gateway_08o9832" targetRef="Activity_Init_Request">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="require_info")</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="Flow_047kumw" sourceRef="UserTask_Validation_CDG_Central" targetRef="Gateway_08o9832" />
-    <bpmn2:sequenceFlow id="Flow_1smbkqr" sourceRef="UserTask_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
-    <bpmn2:sequenceFlow id="Flow_0gka79o" sourceRef="StartEvent_1" targetRef="UserTask_Init_Request" />
+    <bpmn2:sequenceFlow id="Flow_1smbkqr" sourceRef="Activity_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
+    <bpmn2:sequenceFlow id="Flow_0gka79o" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
     <bpmn2:sequenceFlow id="Flow_0e4debm" sourceRef="UserTask_Ref" targetRef="sendRequesterNotification" />
     <bpmn2:serviceTask id="sendCdgBranchNotification" name="Send Notification to CDG Branch" camunda:delegateExpression="sendEmail">
       <bpmn2:extensionElements>
@@ -259,7 +255,7 @@
           <dc:Bounds x="308" y="435" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_02ck8k3_di" bpmnElement="UserTask_Init_Request">
+      <bpmndi:BPMNShape id="Activity_02ck8k3_di" bpmnElement="Activity_Init_Request">
         <dc:Bounds x="400" y="370" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0moaj2y_di" bpmnElement="UserTask_Validation_CDG_Central">

@@ -4,7 +4,7 @@
   <bpmn2:collaboration id="Collaboration_1kfn7th">
     <bpmn2:participant id="Participant_1skzouw" processRef="Process_1" />
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR">
+  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,QHSE_OPERATOR">
     <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:assignee="$data.requester">
       <bpmn2:extensionElements>
         <camunda:formData>
@@ -34,14 +34,14 @@
             </camunda:properties>
           </camunda:formField>
           <camunda:formField id="country" label="Pays" type="string" />
-          <camunda:formField id="phone" label="Téléphone" type="long" />
+          <camunda:formField id="phone" label="Téléphone" type="string" />
           <camunda:formField id="fax" label="Fax" type="string" />
           <camunda:formField id="mail" label="Mail" type="string" />
           <camunda:formField id="currency" label="Devise" type="enum">
-            <camunda:value id="mad" name="MAD" />
-            <camunda:value id="eur" name="EUR" />
-            <camunda:value id="usd" name="USD" />
-            <camunda:value id="cad" name="CAD" />
+            <camunda:value id="MAD" name="MAD" />
+            <camunda:value id="EUR" name="EUR" />
+            <camunda:value id="USD" name="USD" />
+            <camunda:value id="CAD" name="CAD" />
           </camunda:formField>
           <camunda:formField id="paymentTerm" label="Condition de paiement" type="dynamic_enum">
             <camunda:properties>
@@ -61,10 +61,6 @@
             <camunda:properties>
               <camunda:property id="visibility" value="{&#34;field&#34;: &#34;paymentMode&#34;, &#34;value&#34;: &#34;VIREMENT&#34;}" />
             </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="min" config="24" />
-              <camunda:constraint name="max" config="24" />
-            </camunda:validation>
           </camunda:formField>
           <camunda:formField id="RIBDOC" label="Attestation RIB" type="file">
             <camunda:properties>
