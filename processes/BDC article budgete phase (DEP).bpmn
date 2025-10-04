@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1eo74sc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:collaboration id="ValidationDA">
+    <bpmn:participant id="Participant_0m8sw0h" processRef="Process_0t3zjp1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_0t3zjp1" isExecutable="true" camunda:candidateStarterGroups="COLLAB_BC">
+    <bpmn:startEvent id="StartEvent_1" name="start" camunda:initiator="requester" camunda:candidateGroups="COLLAB_BC">
+      <bpmn:outgoing>Flow_0wz39s7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_18pchun" name="Fin Tache">
+      <bpmn:incoming>ValidationCDG_non</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_183zw3x" name="End">
+      <bpmn:incoming>ValidationDGA_non</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_02ndll9">
+      <bpmn:incoming>Gateway_inf_500000_oui</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_19v3q6e" name="End">
+      <bpmn:incoming>Gateway_inf_1000000_oui</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_08qpnot" name="End">
+      <bpmn:incoming>ValidationDAF_non</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="fin" name="End">
+      <bpmn:incoming>ValidationCEO_oui</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_inf_500000">
+      <bpmn:incoming>ValidationDGA_oui</bpmn:incoming>
+      <bpmn:outgoing>Gateway_inf_500000_oui</bpmn:outgoing>
+      <bpmn:outgoing>Gateway_inf_500000_non</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_inf_1000000">
+      <bpmn:incoming>ValidationDAF_oui</bpmn:incoming>
+      <bpmn:outgoing>Gateway_inf_1000000_oui</bpmn:outgoing>
+      <bpmn:outgoing>Gateway_inf_1000000_non</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="ValidationDAF_non" name="non" sourceRef="ValidationDAF" targetRef="Event_08qpnot">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationDAF=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Gateway_inf_1000000_non" name="non" sourceRef="Gateway_inf_1000000" targetRef="ValidationCEO">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.amount &gt; 1000000)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Gateway_inf_1000000_oui" name="Oui" sourceRef="Gateway_inf_1000000" targetRef="Event_19v3q6e">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.amount &lt;= 1000000)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ValidationDAF_oui" name="oui" sourceRef="ValidationDAF" targetRef="Gateway_inf_1000000">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationDAF=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ValidationCDG_oui" name="oui" sourceRef="ValidationCDG" targetRef="validationDGA_BDC">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationCDG=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ValidationCDG_non" name="non" sourceRef="ValidationCDG" targetRef="Event_18pchun">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationCDG=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Gateway_inf_500000_non" name="Non" sourceRef="Gateway_inf_500000" targetRef="ValidationDAF">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.amount &gt; 500000)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Gateway_inf_500000_oui" name="Oui" sourceRef="Gateway_inf_500000" targetRef="Event_02ndll9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.amount &lt;= 500000)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ValidationDGA_non" name="non" sourceRef="validationDGA_BDC" targetRef="Event_183zw3x">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationDGA=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ValidationDGA_oui" name="oui" sourceRef="validationDGA_BDC" targetRef="Gateway_inf_500000">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationDGA=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ValidationCEO_oui" name="oui" sourceRef="ValidationCEO" targetRef="fin">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationCEO=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="ValidationCDG" name="Validation CDG" camunda:candidateGroups="CDG">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ValidationCDG" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentCDG" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ykrfmn</bpmn:incoming>
+      <bpmn:outgoing>ValidationCDG_non</bpmn:outgoing>
+      <bpmn:outgoing>ValidationCDG_oui</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="validationDGA_BDC" name="Validation ou approbation DGA/Dir Dépt" camunda:candidateGroups="DGA_BDC">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ValidationDGA" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentDGA" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>ValidationCDG_oui</bpmn:incoming>
+      <bpmn:outgoing>ValidationDGA_oui</bpmn:outgoing>
+      <bpmn:outgoing>ValidationDGA_non</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ValidationDAF" name="Approbation DAF" camunda:candidateGroups="DAF">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ValidationDAF" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentDAF" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Gateway_inf_500000_non</bpmn:incoming>
+      <bpmn:outgoing>ValidationDAF_oui</bpmn:outgoing>
+      <bpmn:outgoing>ValidationDAF_non</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ValidationCEO" name="Approbation CEO" camunda:candidateGroups="CEO">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ValidationCEO" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentCEO" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Gateway_inf_1000000_non</bpmn:incoming>
+      <bpmn:outgoing>ValidationCEO_oui</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1a6yu0h</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_Init_Request" name="Initiation collaborateur : Création BC CAPEX (article budgété phasé)" camunda:assignee="$data.requester" camunda:candidateGroups="COLLAB_BC">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="BC_CAPEX" type="file" />
+          <camunda:formField id="amount" label="montant" type="long" defaultValue="0" />
+          <camunda:formField id="rejectNotification" label="Voulez-vous rejeter la notification ?" type="boolean" defaultValue="false" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.amount;</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wz39s7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ykrfmn</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0wz39s7" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
+    <bpmn:sequenceFlow id="Flow_0ykrfmn" sourceRef="Activity_Init_Request" targetRef="ValidationCDG" />
+    <bpmn:endEvent id="Event_0h2sg1q" name="End">
+      <bpmn:incoming>Flow_1a6yu0h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1a6yu0h" name="Non" sourceRef="ValidationCEO" targetRef="Event_0h2sg1q">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationCEO=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:textAnnotation id="TextAnnotation_0zrfeqw">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_11em48d">
+      <bpmn:text>M&lt;500K</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0eeldiy">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1abft4p">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0fuu2xk">
+      <bpmn:text>M&lt;1M</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1olj2jh">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0gn697a">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1p4c8nj">
+      <bpmn:text>fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_09whcy6" associationDirection="None" sourceRef="Event_18pchun" targetRef="TextAnnotation_0zrfeqw" />
+    <bpmn:association id="Association_00a4ils" associationDirection="None" sourceRef="Gateway_inf_500000" targetRef="TextAnnotation_11em48d" />
+    <bpmn:association id="Association_0wc9nzc" associationDirection="None" sourceRef="Event_183zw3x" targetRef="TextAnnotation_1abft4p" />
+    <bpmn:association id="Association_0vykv5t" associationDirection="None" sourceRef="Event_02ndll9" targetRef="TextAnnotation_0eeldiy" />
+    <bpmn:association id="Association_0xrh95o" associationDirection="None" sourceRef="Gateway_inf_1000000" targetRef="TextAnnotation_0fuu2xk" />
+    <bpmn:association id="Association_11dt2c0" associationDirection="None" sourceRef="Event_19v3q6e" targetRef="TextAnnotation_1olj2jh" />
+    <bpmn:association id="Association_1uect72" associationDirection="None" sourceRef="Event_08qpnot" targetRef="TextAnnotation_0gn697a" />
+    <bpmn:association id="Association_0xlqrkb" sourceRef="fin" targetRef="TextAnnotation_1p4c8nj" />
+    <bpmn:textAnnotation id="TextAnnotation_1k5wz5h">
+      <bpmn:text>Initiation collaborateur : Création BC CAPEX (article budgété phasé)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_15k2nu4" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_1k5wz5h" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ValidationDA">
+      <bpmndi:BPMNShape id="Participant_0m8sw0h_di" bpmnElement="Participant_0m8sw0h" isHorizontal="true">
+        <dc:Bounds x="131" y="-34" width="1100" height="634" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1k5wz5h_di" bpmnElement="TextAnnotation_1k5wz5h">
+        <dc:Bounds x="260" y="16" width="100" height="84" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1a6yu0h_di" bpmnElement="Flow_1a6yu0h">
+        <di:waypoint x="970" y="460" />
+        <di:waypoint x="970" y="532" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="975" y="493" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ykrfmn_di" bpmnElement="Flow_0ykrfmn">
+        <di:waypoint x="350" y="180" />
+        <di:waypoint x="390" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wz39s7_di" bpmnElement="Flow_0wz39s7">
+        <di:waypoint x="218" y="180" />
+        <di:waypoint x="250" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sb0qqs_di" bpmnElement="ValidationCEO_oui">
+        <di:waypoint x="1020" y="420" />
+        <di:waypoint x="1072" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1038" y="402" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03uatpw_di" bpmnElement="ValidationDGA_oui">
+        <di:waypoint x="740" y="180" />
+        <di:waypoint x="815" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="770" y="162" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_115bk17_di" bpmnElement="ValidationDGA_non">
+        <di:waypoint x="690" y="220" />
+        <di:waypoint x="690" y="262" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="696" y="238" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iyxgh9_di" bpmnElement="Gateway_inf_500000_oui">
+        <di:waypoint x="865" y="180" />
+        <di:waypoint x="942" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="895" y="162" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xt11vp_di" bpmnElement="Gateway_inf_500000_non">
+        <di:waypoint x="840" y="205" />
+        <di:waypoint x="840" y="260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="845" y="223" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w15n86_di" bpmnElement="ValidationCDG_non">
+        <di:waypoint x="440" y="220" />
+        <di:waypoint x="440" y="262" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="446" y="237" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0its35r_di" bpmnElement="ValidationCDG_oui">
+        <di:waypoint x="490" y="180" />
+        <di:waypoint x="640" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="557" y="162" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hbz887_di" bpmnElement="ValidationDAF_oui">
+        <di:waypoint x="890" y="300" />
+        <di:waypoint x="945" y="300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="910" y="282" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1no7ckb_di" bpmnElement="Gateway_inf_1000000_oui">
+        <di:waypoint x="995" y="300" />
+        <di:waypoint x="1052" y="300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1015" y="282" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kctp3j_di" bpmnElement="Gateway_inf_1000000_non">
+        <di:waypoint x="970" y="325" />
+        <di:waypoint x="970" y="380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="976" y="350" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gh1uli_di" bpmnElement="ValidationDAF_non">
+        <di:waypoint x="790" y="300" />
+        <di:waypoint x="764" y="300" />
+        <di:waypoint x="764" y="460" />
+        <di:waypoint x="738" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="738" y="438" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="189" y="205" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18pchun_di" bpmnElement="Event_18pchun">
+        <dc:Bounds x="422" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="343" y="270" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_183zw3x_di" bpmnElement="Event_183zw3x">
+        <dc:Bounds x="672" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="607" y="270" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02ndll9_di" bpmnElement="Event_02ndll9">
+        <dc:Bounds x="942" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19v3q6e_di" bpmnElement="Event_19v3q6e">
+        <dc:Bounds x="1052" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1060" y="325" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08qpnot_di" bpmnElement="Event_08qpnot">
+        <dc:Bounds x="702" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="710" y="485" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10sy6ow_di" bpmnElement="fin">
+        <dc:Bounds x="1072" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1080" y="445" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1pzi3de_di" bpmnElement="Gateway_inf_500000" isMarkerVisible="true">
+        <dc:Bounds x="815" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uo9fdy_di" bpmnElement="Gateway_inf_1000000" isMarkerVisible="true">
+        <dc:Bounds x="945" y="275" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07kuwrv_di" bpmnElement="ValidationCDG">
+        <dc:Bounds x="390" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1d3gxzk_di" bpmnElement="validationDGA_BDC">
+        <dc:Bounds x="640" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hly61b_di" bpmnElement="ValidationDAF">
+        <dc:Bounds x="790" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14hjq8a_di" bpmnElement="ValidationCEO">
+        <dc:Bounds x="920" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nfbjti_di" bpmnElement="Activity_Init_Request">
+        <dc:Bounds x="250" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0h2sg1q_di" bpmnElement="Event_0h2sg1q">
+        <dc:Bounds x="952" y="532" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960" y="575" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0zrfeqw_di" bpmnElement="TextAnnotation_0zrfeqw">
+        <dc:Bounds x="390" y="320" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_11em48d_di" bpmnElement="TextAnnotation_11em48d">
+        <dc:Bounds x="870" y="70" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0eeldiy_di" bpmnElement="TextAnnotation_0eeldiy">
+        <dc:Bounds x="980" y="80" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1abft4p_di" bpmnElement="TextAnnotation_1abft4p">
+        <dc:Bounds x="640" y="320" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0fuu2xk_di" bpmnElement="TextAnnotation_0fuu2xk">
+        <dc:Bounds x="960" y="230" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1olj2jh_di" bpmnElement="TextAnnotation_1olj2jh">
+        <dc:Bounds x="1110" y="285" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0gn697a_di" bpmnElement="TextAnnotation_0gn697a">
+        <dc:Bounds x="620" y="495" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1p4c8nj_di" bpmnElement="TextAnnotation_1p4c8nj">
+        <dc:Bounds x="1100" y="495" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_09whcy6_di" bpmnElement="Association_09whcy6">
+        <di:waypoint x="440" y="298" />
+        <di:waypoint x="440" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_00a4ils_di" bpmnElement="Association_00a4ils">
+        <di:waypoint x="851" y="166" />
+        <di:waypoint x="907" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0wc9nzc_di" bpmnElement="Association_0wc9nzc">
+        <di:waypoint x="690" y="298" />
+        <di:waypoint x="690" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0vykv5t_di" bpmnElement="Association_0vykv5t">
+        <di:waypoint x="971" y="166" />
+        <di:waypoint x="1018" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0xrh95o_di" bpmnElement="Association_0xrh95o">
+        <di:waypoint x="981" y="286" />
+        <di:waypoint x="999" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_11dt2c0_di" bpmnElement="Association_11dt2c0">
+        <di:waypoint x="1088" y="300" />
+        <di:waypoint x="1110" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1uect72_di" bpmnElement="Association_1uect72">
+        <di:waypoint x="707" y="473" />
+        <di:waypoint x="685" y="495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0xlqrkb_di" bpmnElement="Association_0xlqrkb">
+        <di:waypoint x="1100" y="435" />
+        <di:waypoint x="1140" y="495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_15k2nu4_di" bpmnElement="Association_15k2nu4">
+        <di:waypoint x="210" y="165" />
+        <di:waypoint x="260" y="99" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

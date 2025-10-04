@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0ub9o56" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:collaboration id="Collaboration_0ct6nnt">
+    <bpmn:participant id="Participant_15ekpsl" processRef="Process_1rlkcjy" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1rlkcjy" isExecutable="true" camunda:candidateStarterGroups="COLLAB_BC">
+    <bpmn:startEvent id="StartEvent_1" camunda:initiator="requester">
+      <bpmn:outgoing>Flow_1aj7pyo</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_06m3ed1">
+      <bpmn:incoming>validationDGA-BDC_non</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_041xsmy">
+      <bpmn:incoming>Flow_106ohcx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0ko388u">
+      <bpmn:incoming>Flow_1kl6hz3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0uxm8n5">
+      <bpmn:incoming>Flow_0yuhovz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_1xxmohy">
+      <bpmn:incoming>Flow_0144k50</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="validationDGA" name="Validation interne DGA ou Dir Dépt" camunda:candidateGroups="DGA">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validationDGA" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentDGA" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hyzxir</bpmn:incoming>
+      <bpmn:outgoing>validationDGA-BDC_oui</bpmn:outgoing>
+      <bpmn:outgoing>validationDGA-BDC_non</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="validationCDG" name="Validation CDG" camunda:candidateGroups="CDG">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validationCDG" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentCDG" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>validationDGA-BDC_oui</bpmn:incoming>
+      <bpmn:outgoing>Flow_0h7hadr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_106ohcx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="validationDAF" name="Validation DAF" camunda:candidateGroups="DAF">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="validationDAF" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentDAF" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0h7hadr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i9ig7d</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kl6hz3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ValidationCEO" name="Approbation CEO" camunda:candidateGroups="CEO">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ValidationCEO" label="Validation" type="validation">
+            <camunda:properties>
+              <camunda:property id="actions" value="approve,reject" />
+              <camunda:property id="type" value="radio_button" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="commentCEO" label="commentaire" type="string" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1i9ig7d</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yuhovz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0144k50</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_Init_Request" name="Initiation collaborateur : Création BC CAPEX (rallonge, anticipation ou dérogation)" camunda:assignee="$data.requester">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="BC_CAPEX" type="file" />
+          <camunda:formField id="amount" label="montant" type="long" defaultValue="0" />
+          <camunda:formField id="rejectNotification" label="Voulez-vous rejeter la notification ?" type="boolean" defaultValue="false" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
+        </camunda:taskListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.amount;</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1aj7pyo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hyzxir</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0yuhovz" name="oui" sourceRef="ValidationCEO" targetRef="Event_0uxm8n5">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationCEO=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1kl6hz3" name="Non" sourceRef="validationDAF" targetRef="Event_0ko388u">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_106ohcx" name="Non" sourceRef="validationCDG" targetRef="Event_041xsmy">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="validationDGA-BDC_non" name="Non" sourceRef="validationDGA" targetRef="Event_06m3ed1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.validationDGA=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1i9ig7d" name="Oui" sourceRef="validationDAF" targetRef="ValidationCEO">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.validationDAF=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0h7hadr" name="Oui" sourceRef="validationCDG" targetRef="validationDAF">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.validationCDG=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="validationDGA-BDC_oui" name="Oui" sourceRef="validationDGA" targetRef="validationCDG">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.validationDGA=="approve")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1aj7pyo" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
+    <bpmn:sequenceFlow id="Flow_1hyzxir" sourceRef="Activity_Init_Request" targetRef="validationDGA" />
+    <bpmn:sequenceFlow id="Flow_0144k50" name="non" sourceRef="ValidationCEO" targetRef="Event_1xxmohy">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(item.data.ValidationCEO=="reject")</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:textAnnotation id="TextAnnotation_17yl0p1">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_12sp739">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0tjduhg">
+      <bpmn:text>Fin</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1v990s0">
+      <bpmn:text>Fin process</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1nss5no" associationDirection="None" sourceRef="Event_06m3ed1" targetRef="TextAnnotation_17yl0p1" />
+    <bpmn:association id="Association_1j9blkr" associationDirection="None" sourceRef="Event_041xsmy" targetRef="TextAnnotation_12sp739" />
+    <bpmn:association id="Association_0wrcm36" associationDirection="None" sourceRef="Event_0ko388u" targetRef="TextAnnotation_0tjduhg" />
+    <bpmn:association id="Association_0jhxjo5" associationDirection="None" sourceRef="Event_0uxm8n5" targetRef="TextAnnotation_1v990s0" />
+    <bpmn:textAnnotation id="TextAnnotation_1927hs9">
+      <bpmn:text>Initiation collaborateur : Création BC CAPEX (rallonge, anticipation ou dérogation)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_072ecyl" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_1927hs9" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ct6nnt">
+      <bpmndi:BPMNShape id="Participant_15ekpsl_di" bpmnElement="Participant_15ekpsl" isHorizontal="true">
+        <dc:Bounds x="131" y="-50" width="1370" height="450" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1927hs9_di" bpmnElement="TextAnnotation_1927hs9">
+        <dc:Bounds x="290" y="-20" width="100" height="113" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0144k50_di" bpmnElement="Flow_0144k50">
+        <di:waypoint x="1200" y="220" />
+        <di:waypoint x="1200" y="256" />
+        <di:waypoint x="1180" y="256" />
+        <di:waypoint x="1180" y="292" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1181" y="238" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hyzxir_di" bpmnElement="Flow_1hyzxir">
+        <di:waypoint x="340" y="180" />
+        <di:waypoint x="370" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aj7pyo_di" bpmnElement="Flow_1aj7pyo">
+        <di:waypoint x="218" y="180" />
+        <di:waypoint x="240" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1y82d22_di" bpmnElement="validationDGA-BDC_oui">
+        <di:waypoint x="470" y="180" />
+        <di:waypoint x="630" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="162" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h7hadr_di" bpmnElement="Flow_0h7hadr">
+        <di:waypoint x="730" y="180" />
+        <di:waypoint x="890" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="801" y="162" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i9ig7d_di" bpmnElement="Flow_1i9ig7d">
+        <di:waypoint x="990" y="180" />
+        <di:waypoint x="1150" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1061" y="162" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ykyzeq_di" bpmnElement="validationDGA-BDC_non">
+        <di:waypoint x="420" y="220" />
+        <di:waypoint x="420" y="282" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="248" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_106ohcx_di" bpmnElement="Flow_106ohcx">
+        <di:waypoint x="680" y="220" />
+        <di:waypoint x="680" y="282" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="248" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kl6hz3_di" bpmnElement="Flow_1kl6hz3">
+        <di:waypoint x="940" y="220" />
+        <di:waypoint x="940" y="282" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="945" y="248" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yuhovz_di" bpmnElement="Flow_0yuhovz">
+        <di:waypoint x="1250" y="180" />
+        <di:waypoint x="1342" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1288" y="162" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06m3ed1_di" bpmnElement="Event_06m3ed1">
+        <dc:Bounds x="402" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_041xsmy_di" bpmnElement="Event_041xsmy">
+        <dc:Bounds x="662" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ko388u_di" bpmnElement="Event_0ko388u">
+        <dc:Bounds x="922" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0uxm8n5_di" bpmnElement="Event_0uxm8n5">
+        <dc:Bounds x="1342" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xxmohy_di" bpmnElement="Event_1xxmohy">
+        <dc:Bounds x="1162" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_057b4kp_di" bpmnElement="validationDGA">
+        <dc:Bounds x="370" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wajxtf_di" bpmnElement="validationCDG">
+        <dc:Bounds x="630" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ave5ov_di" bpmnElement="validationDAF">
+        <dc:Bounds x="890" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lcu11p_di" bpmnElement="ValidationCEO">
+        <dc:Bounds x="1150" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h0nj49_di" bpmnElement="Activity_Init_Request">
+        <dc:Bounds x="240" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_17yl0p1_di" bpmnElement="TextAnnotation_17yl0p1">
+        <dc:Bounds x="369" y="350" width="102" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_12sp739_di" bpmnElement="TextAnnotation_12sp739">
+        <dc:Bounds x="630" y="350" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0tjduhg_di" bpmnElement="TextAnnotation_0tjduhg">
+        <dc:Bounds x="890" y="350" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1v990s0_di" bpmnElement="TextAnnotation_1v990s0">
+        <dc:Bounds x="1380" y="80" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1nss5no_di" bpmnElement="Association_1nss5no">
+        <di:waypoint x="420" y="318" />
+        <di:waypoint x="421" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1j9blkr_di" bpmnElement="Association_1j9blkr">
+        <di:waypoint x="680" y="318" />
+        <di:waypoint x="680" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0wrcm36_di" bpmnElement="Association_0wrcm36">
+        <di:waypoint x="940" y="318" />
+        <di:waypoint x="940" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0jhxjo5_di" bpmnElement="Association_0jhxjo5">
+        <di:waypoint x="1371" y="166" />
+        <di:waypoint x="1418" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_072ecyl_di" bpmnElement="Association_072ecyl">
+        <di:waypoint x="211" y="166" />
+        <di:waypoint x="290" y="60" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
