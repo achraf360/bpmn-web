@@ -1,0 +1,52 @@
+name: 🚀 Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: /home/a.mouissa/bpmn-web
+
+    steps:
+      - name: Stop PM2 process (graceful shutdown)
+        run: pm2 stop bpmn-web || echo "PM2 process not running"
+        continue-on-error: true
+
+      - name: Pull latest changes from main
+        run: |
+          git fetch origin
+          git reset --hard origin/main
+          git clean -fd
+
+      - name: Install dependencies
+        run: npm ci --only=production
+
+      - name: Build TypeScript application
+        run: npm run build
+
+      - name: Start/Restart PM2 application
+        run: |
+          if pm2 describe bpmn-web > /dev/null; then
+            pm2 restart bpmn-web
+          else
+            pm2 start dist/app.js --name "bpmn-web"
+          fi
+          pm2 save
+
+      - name: Verify deployment
+        run: |
+          pm2 status
+          sleep 5
+          pm2 logs bpmn-web --lines 10
+
+      - name: Health check
+        run: |
+          sleep 10
+          curl -f http://localhost:3000 || echo "Health check failed"
+        continue-on-error: true
