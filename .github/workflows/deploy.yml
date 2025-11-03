@@ -25,7 +25,7 @@ jobs:
           git clean -fd
 
       - name: Install dependencies
-        run: npm ci --only=production
+        run: npm ci
 
       - name: Build TypeScript application
         run: npm run build
@@ -43,7 +43,7 @@ jobs:
         run: |
           pm2 status
           sleep 5
-          pm2 logs bpmn-web --lines 10
+          pm2 logs bpmn-web --lines 10 --nostream
 
       - name: Health check
         run: |
