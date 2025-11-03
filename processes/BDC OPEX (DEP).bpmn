@@ -30,7 +30,7 @@
               <camunda:property id="type" value="radio_button" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="commentDGA" label="commentaire" type="string" />
+          <camunda:formField id="commentDGA" label="Commentaire" type="string" />
         </camunda:formData>
         <camunda:taskListener event="validate">
           <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
@@ -49,7 +49,7 @@
               <camunda:property id="type" value="radio_button" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="commentCDG" label="commentaire" type="string" />
+          <camunda:formField id="commentCDG" label="Commentaire" type="string" />
         </camunda:formData>
         <camunda:taskListener event="validate">
           <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
@@ -62,20 +62,22 @@
     <bpmn:userTask id="Activity_Init_Request" name="Initiation collaborateur : Création BC OPEX" camunda:assignee="$data.requester" camunda:candidateGroups="COLLAB_BC">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="amount" label="montant" type="long">
+          <camunda:formField id="BDC_OPEX" label="Bon de commande" type="file" />
+          <camunda:formField id="purchaseDescription" label="Descriptif d&#39;achat" type="string">
             <camunda:properties>
-              <camunda:property id="actions" value="approve,reject" />
-              <camunda:property id="type" value="radio_button" />
+              <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="commentinit_task" label="commentaire" type="string" />
-          <camunda:formField id="BDC_OPEX" type="file" />
+          <camunda:formField id="amount" label="Montant" type="long" />
+          <camunda:formField id="supplierName" label="Nom Fournisseur" type="string" />
+          <camunda:formField id="site" label="Site" type="string" />
+          <camunda:formField id="commentinit_task" label="Commentaire" type="text" />
         </camunda:formData>
         <camunda:taskListener event="validate">
           <camunda:script scriptFormat="JavaScript">item.vars=item.input;</camunda:script>
         </camunda:taskListener>
         <camunda:executionListener event="end">
-          <camunda:script scriptFormat="JavaScript">data.subject=this.data.amount;</camunda:script>
+          <camunda:script scriptFormat="JavaScript">data.subject=this.data.purchaseDescription;</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_06iowmq</bpmn:incoming>

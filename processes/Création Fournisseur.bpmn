@@ -4,7 +4,7 @@
   <bpmn2:collaboration id="Collaboration_1kfn7th">
     <bpmn2:participant id="Participant_1skzouw" processRef="Process_1" />
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,QHSE_OPERATOR">
+  <bpmn2:process id="Process_1" name="&#10;" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,IT_OPERATOR,QHSE_OPERATOR,MKT_OPERATOR,FINANCE_OPERATOR">
     <bpmn2:userTask id="Activity_Init_Request" name="Initiation Demande" camunda:assignee="$data.requester">
       <bpmn2:extensionElements>
         <camunda:formData>

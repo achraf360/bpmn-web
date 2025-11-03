@@ -3,7 +3,7 @@
   <bpmn2:collaboration id="Collaboration_0v2x10e">
     <bpmn2:participant id="Participant_0k7ofgq" processRef="Process_1" />
   </bpmn2:collaboration>
-  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,IT_OPERATOR,QHSE_OPERATOR">
+  <bpmn2:process id="Process_1" isExecutable="true" camunda:candidateStarterGroups="ACHAT_OPERATOR,IT_OPERATOR,QHSE_OPERATOR,MKT_OPERATOR,FINANCE_OPERATOR">
     <bpmn2:sequenceFlow id="Flow_15zu4it" sourceRef="StartEvent_1" targetRef="Activity_Init_Request" />
     <bpmn2:sequenceFlow id="Flow_0y5fyqo" sourceRef="Activity_Init_Request" targetRef="UserTask_Validation_CDG_Central" />
     <bpmn2:sequenceFlow id="Flow_1kzs64u" sourceRef="UserTask_Ref" targetRef="Event_10sawzh" />
@@ -56,7 +56,7 @@
           <camunda:formField id="taxItemGroup" label="Groupe Taxe Achat" type="dynamic_enum">
             <camunda:properties>
               <camunda:property id="endpoint" value="/taxItemGroups" />
-              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;taxItemGroup&#34;],   &#34;valueField&#34;: &#34;taxItemGroup&#34; }" />
+              <camunda:property id="fieldConfig" value="{   &#34;labelFields&#34;: [&#34;taxItemGroup&#34;,&#34;name&#34;] }" />
               <camunda:property id="is_required" value="true" />
             </camunda:properties>
           </camunda:formField>
